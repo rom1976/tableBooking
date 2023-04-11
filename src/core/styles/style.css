@@ -1,0 +1,23 @@
+@keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-359deg);
+    }
+  }
+
+.rotate {
+   /* animation: rotation 2s infinite linear;    
+   */
+   animation: rotation 2s linear; 
+} 
+
+.rotate-inf {
+   animation: rotation 2s infinite linear;    
+    
+ } 
+
+ .bb:hover {
+  background-color: black;
+ }
