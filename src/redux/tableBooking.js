@@ -30,7 +30,23 @@ const initialOutlet = () => {
   return item ? JSON.parse(item) : false
 }
 
-export const getGuestListHandler = createAsyncThunk('getGuestListHandler/sendOTP', async (obj) => {
+export const getGuestTotalBooking = createAsyncThunk('tableBooking/getGuestTotalBooking', async (obj) => {
+  const res = axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTotalBooking`, {
+                  params:{
+                    ContactNo:obj.ContactNo
+                  },
+                  headers: { Authorization: `Bearer ${obj.token}`},
+                   "Content-Type": "application/json"
+                  }
+                ).then((res) =>{
+                  // return {outletDetails :response.data.response.outletDetails, errorCode: response.data.errorCode, message:response.data.message}
+                 // console.log(res)
+                   return {totalBooking:res.data.response.totalBooking, errorCode: res.data.errorCode, message:res.data.message}
+                }) 
+                return res
+        })
+
+export const getGuestListHandler = createAsyncThunk('tableBooking/getGuestListHandler', async (obj) => {
   const res =   axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTableBookingList`, {
     params:{
       CurrentPageNumber:1,
@@ -57,6 +73,7 @@ return res
       tableData: initialBooking(),
       loggedIn:initialLoggedIn(),
       guestList: initialGuestList(),
+      guestTotalBooking:'',
       selectedProperty:initialProperty(),
       selectedOutlet:initialOutlet(),
     },
@@ -92,6 +109,12 @@ return res
           state.guestList = action.payload
           console.log(action.payload)  
           localStorage.setItem('guestList', JSON.stringify(action.payload))  
+          // state.bookmarks = action.payload.bookmarks
+        })
+        .addCase(getGuestTotalBooking.fulfilled, (state, action) => {
+          state.guestTotalBooking = action.payload
+          console.log(action.payload)  
+         // localStorage.setItem('guestList', JSON.stringify(action.payload))  
           // state.bookmarks = action.payload.bookmarks
         })
       }

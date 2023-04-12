@@ -8,7 +8,7 @@ import Loading from "../../Loading";
 import axios from "axios";
 
  
-import { getGuestListHandler, handleBooking, handlePropertySelection } from "../../redux/tableBooking";
+import { getGuestListHandler, getGuestTotalBooking, handleBooking, handlePropertySelection } from "../../redux/tableBooking";
 import { handleModalTitle, sendOTP } from "../../redux/modals";
 import ModalsComponent from "./Modals/ModalsComponent";
 import { getPropertyList } from "../../redux/propertyData";
@@ -230,6 +230,7 @@ const timeSlotRef = useRef(true)
            // setModalTitle('')
            dispatch(handleModalTitle('Your Booking Success'))
             //setModalSave(!modalSave)
+              dispatch(getGuestTotalBooking({ContactNo, outletList:launch.outletListData, token}))
               dispatch(getGuestListHandler({ContactNo, outletList:launch.outletListData, token}))
               setBookingDate('')
               setBookingTime('')
@@ -259,6 +260,10 @@ const timeSlotRef = useRef(true)
                   "Content-Type": "application/json"
                   }
                  ).then((response) => {   
+                  console.log(response)
+                  if (response.data.errorCode === 1) {
+                    dispatch(handleModalTitle(response.data.message))
+                  } 
                   setTimeSlotList(response.data.response)
                  
                  }).catch(error => console.log(error)) 

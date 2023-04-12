@@ -160,6 +160,7 @@ const ModalsComponent = (props) => {
                         setContactNo(no) 
                         dispatch(handleBooking({...tableBooking.tableData, ContactNo:no}))
                         otpHandler() 
+                        dispatch(handleModalTitle('OTP')) 
                       } else {
                         setModalErrorMessage('') 
                         otpHandler() 
@@ -179,7 +180,8 @@ const ModalsComponent = (props) => {
               !modalIsOpenLink && openModalLink()
           } else if (modalTitle === 'Your Contact No') {
              setModalContent('')
-             !modalIsOpenLink && openModalLink()
+            // !modalIsOpenLink &&
+             openModalLink()
           } else if (modalTitle === 'OTP') { 
             setErrorMessageOTP('')
            setModalContent('')

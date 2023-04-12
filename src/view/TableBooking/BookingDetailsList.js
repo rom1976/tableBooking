@@ -50,10 +50,18 @@ const BookingDetailsList = (props) => {
             useEffect(() => {
             
                  if(tableBooking.guestList)  {
-                  setGuestTableBookingList(tableBooking.guestList)
-                 
+                  setGuestTableBookingList(tableBooking.guestList) 
                  }
             }, [tableBooking.guestList])
+
+            useEffect(() => {
+            
+              if(tableBooking.guestTotalBooking.totalBooking)  {
+               setTotalBooking(tableBooking.guestTotalBooking.totalBooking) 
+
+              }
+              console.log(tableBooking.guestTotalBooking)
+         }, [tableBooking.guestTotalBooking.totalBooking])
 
            useEffect(() => {
                if (launch) { 

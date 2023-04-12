@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { CardHeader } from "reactstrap"
 import { useMediaQuery } from 'react-responsive'; 
-import { Link } from "react-router-dom";
  
 // custome hooks
 import useBooking from "../../Hooks/useBooking";
@@ -76,9 +75,10 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                  setPropertyName(sel.propertyName)
                  setPropertyId(sel.propertyId)
                  }
-          
+              
               const sel = tableBooking.selectedOutlet
               console.log(sel)
+              
               setOutletName(sel.outletName)
               setOutletCode(sel.outletCode)
               setImageUrl(sel.imageUrl)
@@ -162,7 +162,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
 
                           //sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:PropertyId, propertyName:propertyName, outletCode:outletcode, outletName:outletName, imageUrl:imgurl})) 
                    }  else if (launchData.outletListData.outletList.length > 1) {  
-                              dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''}))
+                             // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''}))
                              // console.log(outletArray)    
                              //  console.log(outletList, OutletCode)
                            if (outletName === 'NONE' || outletName === '' || !outletName) { 
