@@ -155,12 +155,17 @@ const timeSlotRef = useRef(true)
                 // setNoOfGuest(bkng.NoOfGuest)
              //    setBookingTime(bkng.BookingTime)
                // setSelectedTitle(bkng.selectedTitle)
-                setFirstName(bkng.FirstName)
-                setLastName(bkng.LastName)
+               if(bkng.FirstName)  setFirstName(bkng.FirstName)
+
+               if(bkng.LastName) setLastName(bkng.LastName)
+
                if (bkng.selectedTelephoneCode) setSelectedTelephoneCode(bkng.selectedTelephoneCode) 
+
                if(bkng.ContactNo)  setContactNo(bkng.ContactNo)
-                setEmailId(bkng.EmailId)
-                setInstruction(bkng.Instruction)    
+
+               if(bkng.EmailId)  setEmailId(bkng.EmailId)
+               
+               if(bkng.Instruction)  setInstruction(bkng.Instruction)    
              }, [tableBooking.tableData])
 
          useEffect(() => {
