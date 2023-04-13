@@ -153,12 +153,17 @@ const ModalsComponent = (props) => {
  
     const contactHandler = (no) => {       
         //  if (ContactNo.length !== 10) {    
-          if (no.length !== 10 && ContactNo.length !== 10) {
+          if (no.length !== 10 ) {
+            // && ContactNo.length !== 10 removed 
            setModalErrorMessage('Kindly Enter Valid Mobile No') 
           }else { 
-            if (modalTitle === 'Your Contact No' && !ContactNo) {
+            if (modalTitle === 'Your Contact No' && !ContactNo || (ContactNo !== no)) {
+                          if (ContactNo !== no) {
+                            dispatch(handleLogin(false))
+                          }
+
                         setContactNo(no) 
-                        dispatch(handleBooking({...tableBooking.tableData, ContactNo:no}))
+                      //  dispatch(handleBooking({...tableBooking.tableData, ContactNo:no}))
                         otpHandler() 
                         dispatch(handleModalTitle('OTP')) 
                       } else {
@@ -397,8 +402,9 @@ const ModalsComponent = (props) => {
               setErrorMessageOTP('')  
               dispatch(handleLogin(true)) 
               dispatch(handleBooking({...tableBooking.tableData, ContactNo}))
-              bookingHandlerToggle && dispatch(handleModalTitle("Loging Success"))
-             
+              //bookingHandlerToggle && 
+              dispatch(handleModalTitle("Login Success"))
+              props.setBookingHandlerToggle(true)
                 !bookingHandlerToggle && setTimeout(() => {
                closeModalLink()
               }, 500);
@@ -431,7 +437,7 @@ const ModalsComponent = (props) => {
                        paddingBottom:'2px',
                        fontSize:'15px'
                      }}>
-                     {(modalTitle !== 'OTP' && modalTitle !== 'Your Booking Success') && modalTitle} 
+                     {(modalTitle !== 'Your Booking Success') && modalTitle} 
                        </div>  
                        <div style={{padding:'5px', marginTop:'10px'}}>
                             {modalContent}  
@@ -455,7 +461,7 @@ const ModalsComponent = (props) => {
                 {modalTitle === 'Your Contact No' &&  <Button style={{backgroundColor:'black'}}
                      onClick={()=>{ 
                         contactNoRef.current ? contactHandler(contactNoRef.current) : contactHandler(ContactNo)       
-                    }}
+                       }}
                 > Continue</Button>}
                
                 {modalTitle === 'OTP' && <Button 

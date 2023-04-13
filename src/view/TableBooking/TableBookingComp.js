@@ -8,7 +8,7 @@ import Loading from "../../Loading";
 import axios from "axios";
 
  
-import { getGuestListHandler, getGuestTotalBooking, handleBooking, handlePropertySelection } from "../../redux/tableBooking";
+import { getGuestListHandler, getGuestTotalBooking, handleBooking, handleLogin, handlePropertySelection } from "../../redux/tableBooking";
 import { handleModalTitle, sendOTP } from "../../redux/modals";
 import ModalsComponent from "./Modals/ModalsComponent";
 import { getPropertyList } from "../../redux/propertyData";
@@ -170,15 +170,17 @@ const timeSlotRef = useRef(true)
 
          useEffect(() => {
           setLoggedIn(tableBooking.loggedIn) 
-          if (!tableBooking.loggedIn) {
+          if (!tableBooking.loggedIn && !bookingHandlerToggle) {
               setFirstName('')
               setLastName('')
               setContactNo('')
             }
-         }, [tableBooking.loggedIn])
+         }, [tableBooking.loggedIn, bookingHandlerToggle])
 
          useEffect(() => {
            if (BookingTime && FirstName && ContactNo && tableBooking.loggedIn) setBookingHandlerToggle(true)
+
+           console.log(tableBooking.loggedIn, bookingHandlerToggle)
          },[tableBooking.loggedIn])
 
         
@@ -235,6 +237,7 @@ const timeSlotRef = useRef(true)
            // setModalTitle('')
            dispatch(handleModalTitle('Your Booking Success'))
             //setModalSave(!modalSave)
+            setBookingHandlerToggle(false)  
               dispatch(getGuestTotalBooking({ContactNo, outletList:launch.outletListData, token}))
               dispatch(getGuestListHandler({ContactNo, outletList:launch.outletListData, token}))
               setBookingDate('')
@@ -247,7 +250,7 @@ const timeSlotRef = useRef(true)
            })
             }  
         
-           return () => setBookingHandlerToggle(false)  
+          // return () => setBookingHandlerToggle(false)  
 
         }, [tableBooking.loggedIn, bookingHandlerToggle]) 
   
@@ -322,13 +325,21 @@ const timeSlotRef = useRef(true)
                         dispatch(sendOTP({ContactNo, token:launch.token}))
                         dispatch(handleModalTitle('OTP')) 
                         setBookingHandlerToggle(false)  
+                      }else if (ContactNo !== tableBooking.tableData.ContactNo) {
+                        dispatch(handleLogin(false))
+                        dispatch(sendOTP({ContactNo, token:launch.token}))
+                        dispatch(handleBooking({...tableBooking.tableData, ContactNo}))
+                        dispatch(handleModalTitle('OTP'))  
+                     
+                        alert('hi diff')
                       }else {  
                          // otpHandler ()
                          // setErrorMessageOTP('')
                           setBookingHandlerToggle(true)  
                           updateTableBookingData()        
                      } 
-                   }    
+                   }  
+                   
          
          return(
             <Layout outletData = {outletDetails}>
@@ -350,6 +361,7 @@ const timeSlotRef = useRef(true)
                       min = {d.toISOString().split('T')[0]}
                       onChange={e => {
                        setBookingDate(e.target.value)
+                       timeSlotRef.current = true
                      // console.log(`${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`, d.toISOString().split('T')[0])
                      }} 
                       />
@@ -384,6 +396,7 @@ const timeSlotRef = useRef(true)
                                onClick ={() => { 
                                 setBookingTime(time.timeSlot)
                                 setTimeColor('black')
+                              
                              }} 
                            >{time.timeSlot}</Button>
                           )
@@ -491,7 +504,7 @@ const timeSlotRef = useRef(true)
                 <Row className='justify-content-center mt-2'>
                 <Col sm={2} style={{ textAlign:'center', marginBottom:'15px'}}>
                    <Button style={{backgroundColor:'black'}} onClick={ () => {
-                    
+                       // if ()
                        bookingSubmitHandler()
                      // setSaveToggle(true)
                    }}>
