@@ -8,16 +8,18 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, FormGroup, I
 //custome hooks
 // import useLaunch from "../../core/utils/useLaunch"
  
-import { handlePageId, handleViewPage } from "../../redux/launch";
+import { getOutletList, handlePageId, handleViewPage } from "../../redux/launch";
 // import useWalkin from "../../Hooks/useWalkin";
  import View from "../../View";
  import Loading from "../Loading";
 import { getMobileCountryCode, getTitleList } from "../../redux/options";
+import { getPropertyList } from "../../redux/propertyData";
 // import WalkinStatus from "../walkIn/WalkinStatus";
 
 const CheckIn = (props) => { 
      const dispatch = useDispatch() 
      const launch = useSelector(state => state.launch)
+     const propertyData = useSelector(state => state.propertyList)
      const optionsData = useSelector(state => state.options)
      const [token, setToken] = useState(launch.token)
      //const [walkinData, setWalkingData] = useState(sessionStorage.getItem('walkinData') ? JSON.parse(sessionStorage.getItem('walkinData')) : '') 
@@ -31,9 +33,10 @@ const CheckIn = (props) => {
      const [imageUrl, setImageurl] = useState()
      const [outletCode, setOutletCode] = useState('')
      const [outletName, setOutletName] = useState('')
+     const [propertyId, setPropertyId] = useState('')
      const [propertyName, setPropertyName] = useState('') 
      const [saving, setSaving]= useState(false)
-     const [checkInId, setCheckInId] = useState(sessionStorage.getItem('checkinId') ? JSON.stringify(sessionStorage.getItem('checkinId')):'')
+     const [checkInId, setCheckInId] = useState('')
    //  const useWalkinData = useWalkin(checkInId, tokenData.token)
    //  const [refreshW, setRefreshW] = useState(false)
 
@@ -43,17 +46,46 @@ const CheckIn = (props) => {
               if (launch.outletDetails.outletDetails) {
                    const otDetails = launch.outletDetails.outletDetails
                 setImageurl(otDetails.imageUrl)
-                console.log(otDetails)
+                 
               }
 
               if (launch.token && titleRef.current) {
                 setToken(launch.token) 
+                dispatch(getPropertyList(launch.token))
+                dispatch(getOutletList({propertyId, token:launch.token}))
                 dispatch(getTitleList(launch.token))
                 dispatch(getMobileCountryCode(launch.token))
+               
                 titleRef.current = false
               }
 
            }, [launch.outletDetails.outletDetails])
+
+           useEffect(() => {
+              if (propertyData.propertyData.propertyList) {
+             propertyData.propertyData.propertyList.forEach(item => {
+                                 if (item.propertyId === propertyId) {
+                                      setPropertyName(item.propertyName)
+                                   }
+                              }) 
+                //  setPropertyName(propty.propertyName)
+                
+              }
+           }, [propertyData.propertyData, propertyId])
+
+           useEffect(() => {
+               
+            
+                 if (launch.outletListData.outletList){
+                    launch.outletListData.outletList.forEach(item => {
+                      
+                    if (item.outletCode === outletCode) {
+                      setOutletName(item.outletName)
+                      
+                    }
+                  })
+                 }
+           },[launch.outletListData.outletList, outletCode] )
      
      const subMitHandler = (e) => {
         e.preventDefault() 
@@ -94,8 +126,10 @@ const CheckIn = (props) => {
            setSaving(false) 
            if (res.data.errorCode === 0) {
                setCheckInId(res.data.response.checkInId)
-               dispatch(handleViewPage(<View checkInId = {res.data.response.checkInId}  PropertyId={ launch.paramData.PropertyId}/>))
-               dispatch(handlePageId(2))  
+              // dispatch(handleViewPage(<View checkInId = {res.data.response.checkInId}  PropertyId={ launch.paramData.propertyId}/>))
+              //  dispatch(handlePageId(2))  
+              //  setView(2)
+             
             }
            if (res.data.errorCode === 1) {
                  const error = res.data
@@ -107,10 +141,8 @@ const CheckIn = (props) => {
        useEffect(() => {
             
               const paramData = launch.paramData 
-                setOutletName(paramData.outletName)
-                setPropertyName(paramData.propertyName)
+                setPropertyId(paramData.propertyId)  
                 setOutletCode(paramData.outletCode)      
-       
        }, [launch.paramData])
      
           useEffect(() => {
@@ -119,9 +151,7 @@ const CheckIn = (props) => {
           }, [imageUrl])
  
        useEffect(() => {
-        if(optionsData.optionsTitle.length > 0) setOptionsTitle(optionsData.optionsTitle)
-
-          console.log(optionsData.optionsTitle && optionsData.optionsTitle)
+        if(optionsData.optionsTitle.length > 0) setOptionsTitle(optionsData.optionsTitle) 
         }, [optionsData.optionsTitle])
  
    //     useEffect(() => {
@@ -137,8 +167,9 @@ const CheckIn = (props) => {
        //    }
            
             if (checkInId) {
+              
               // return <WalkinStatus walkingStatusDetails={walkinData} walkingBookingStatusHandler={walkingBookingStatusHandler} refreshW = {refreshW}/>  
-                return <View BookingId={checkInId} />
+                return <View checkInId={checkInId}  PropertyId={launch.paramData.propertyId}/>
             } else  
             return (   
             <Card style={{backgroundColor:'white', border:'none'}}>

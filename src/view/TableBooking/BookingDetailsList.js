@@ -119,7 +119,7 @@ const BookingDetailsList = (props) => {
             }, [isOpenBL, tableBooking.loggedIn, currentPage, props.outletList, props.token, ContactNo])
 
             const cancelHandler = (outcode, propertyId, bookingId) => {
-              
+                  setSpinnerToggle(bookingId)
                 axios.post(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}ValidateCancelTableBooking`, 
                 {
                  PropertyId:propertyId,
@@ -144,21 +144,20 @@ const BookingDetailsList = (props) => {
             ) 
                }
              }).then(() => {   
-                setSpinnerToggle(bookingId)
+               
                setTimeout(() => {  
                  setSpinnerToggle('') 
-                 getGuestListHandler()}, 1000 ) 
+                 getGuestListHandler()}, 2000 ) 
                //  setBookingHandlerToggle(false)  
              }) 
               } 
 
               useEffect(() => {
                     if (props.modalTitle === 'Your Booking Success') getGuestListHandler()
-
+                      
                    // return () => setModalTitle('')
               }, [props.modalTitle])
-            
-
+           
     return (
         <Fragment>
         <Row className="mb-1" >

@@ -51,6 +51,7 @@ const TableBookingComp = (props) => {
  const propertyRef = useRef(true)
 const outletDetailsRef = useRef(true)
 const timeSlotRef = useRef(true)
+const [diffNo, setDiffNo] = useState(false) 
           const d = new Date()
           const [bookingDate, setBookingDate] = useState(d.toISOString().split('T')[0])
          
@@ -73,28 +74,28 @@ const timeSlotRef = useRef(true)
                        titleRef.current = false
                      }
         
-                     useEffect(() => {  
-                      //GET 'https://dev.lucidits.com/LUCIDAPI/V1/GetMobileCountryCode'
-                            if (token) { 
-                                         getTitleList()
-                                        //toggleRef.current = false
-                                       //  getPropertyHandler()  
-                                  if (mobileCodeRef.current)  axios.get(`${process.env.REACT_APP_BASE_API_URL}LUCIDAPI/V1/GetMobileCountryCode`,
-                                       { 
-                                     headers: { Authorization: `Bearer ${token}`},
-                                     "Content-Type": "application/json"
-                                     } 
-                                    ).then((response) => { 
-                                    // setMobileCountryCodeData(response.data.response)
-                                       const list = response.data.response
-                                     setOptionsTelephoneCode(() => list.mobileCountryCodeList.map(code => ({value:code.countryCode, label : code.telephoneCode})))
-                                   // console.log(response.data.response)
-                                    }).catch(error => console.log(error)) 
+               useEffect(() => {  
+                //GET 'https://dev.lucidits.com/LUCIDAPI/V1/GetMobileCountryCode'
+                      if (token) { 
+                                  getTitleList()
+                                  //toggleRef.current = false
+                                 //  getPropertyHandler()  
+                            if (mobileCodeRef.current)  axios.get(`${process.env.REACT_APP_BASE_API_URL}LUCIDAPI/V1/GetMobileCountryCode`,
+                                 { 
+                               headers: { Authorization: `Bearer ${token}`},
+                               "Content-Type": "application/json"
+                               } 
+                              ).then((response) => { 
+                              // setMobileCountryCodeData(response.data.response)
+                                 const list = response.data.response
+                               setOptionsTelephoneCode(() => list.mobileCountryCodeList.map(code => ({value:code.countryCode, label : code.telephoneCode})))
+                            
+                              }).catch(error => console.log(error)) 
       
-                                    mobileCodeRef.current = false
-                                }
+                              mobileCodeRef.current = false
+                          }
           
-                        }, [token])
+                  }, [token])
 
      //    useEffect(() => {
      //      if (launch.paramData) {
@@ -114,14 +115,41 @@ const timeSlotRef = useRef(true)
                              setPropertyName(sel.propertyName)
                              setPropertyId(sel.propertyId)
                         }
-                        if (tableBooking.selectedOutlet) {
-                          const sel = tableBooking.selectedOutlet
-                          setOutletName(sel.outletName)
-                          setOutletCode(sel.outletCode)  
-                     } 
+                      
+           }, [tableBooking.selectedProperty])
+
+           useEffect(() => {
+            const sel = tableBooking.selectedOutlet
+             // setBookingDate(d.toISOString().split('T')[0]) 
+                  if (sel.outletCode) { 
+                      setOutletName(sel.outletName)
+                    
+                       if (sel.outletCode !== outletCode)  {
+                           setOutletCode(sel.outletCode)  
+                           timeSlotRef.current = true
+                           console.log('different outlet',  timeSlotRef.current, sel.outletCode === outletCode)
+                          } 
+                 }  
+               console.log(tableBooking)
            
-              console.log(tableBooking.selectedProperty, tableBooking.selectedOutlet)
-           }, [tableBooking.selectedProperty, tableBooking.selectedOutlet, launch.outletListData.token])
+           }, [tableBooking.selectedOutlet.outletCode])
+
+            useEffect(() => {
+              if (outletCode){
+               //   timeSlotRef.current = !timeSlotRef.current
+             //    if (!timeSlotList || timeSlotList === '' || !timeSlotRef.current)  
+                timeSlotRef.current = true
+                console.log(timeSlotRef.current)
+              } 
+              
+            }, [outletCode, timeSlotList])
+
+            useEffect(() => {
+               if (bookingDate){
+                   timeSlotRef.current = true
+                   console.log(timeSlotRef.current)
+                 } 
+            }, [bookingDate])
  
           useEffect(() => {
              if (launch.token) {
@@ -134,7 +162,7 @@ const timeSlotRef = useRef(true)
               }
 
              if(launch.paramData.outletCode === 'NONE' || !launch.paramData.outletCode || !outletCode && launch.token){
-              console.log({propertyId:launch.paramData.propertyId, token:launch.token})
+              
               //  dispatch(getOutletList({PropertyId:launch.paramData.propertyId, token:launch.token})) 
               }
  
@@ -155,32 +183,34 @@ const timeSlotRef = useRef(true)
                 // setNoOfGuest(bkng.NoOfGuest)
              //    setBookingTime(bkng.BookingTime)
                // setSelectedTitle(bkng.selectedTitle)
-               if(bkng.FirstName)  setFirstName(bkng.FirstName)
+               if (bkng) {
+                if(bkng.FirstName) setFirstName(bkng.FirstName)
 
-               if(bkng.LastName) setLastName(bkng.LastName)
+                if(bkng.LastName)  setLastName(bkng.LastName)
 
-               if (bkng.selectedTelephoneCode) setSelectedTelephoneCode(bkng.selectedTelephoneCode) 
+               if (bkng.selectedTelephoneCode)   setSelectedTelephoneCode(bkng.selectedTelephoneCode) 
 
-               if(bkng.ContactNo)  setContactNo(bkng.ContactNo)
+               if(bkng.ContactNo) setContactNo(bkng.ContactNo)
 
-               if(bkng.EmailId)  setEmailId(bkng.EmailId)
+               if(bkng.EmailId) setEmailId(bkng.EmailId)
                
-               if(bkng.Instruction)  setInstruction(bkng.Instruction)    
+               if(bkng.Instruction) setInstruction(bkng.Instruction)   
+               } 
              }, [tableBooking.tableData])
 
-         useEffect(() => {
-          setLoggedIn(tableBooking.loggedIn) 
-          if (!tableBooking.loggedIn && !bookingHandlerToggle) {
-              setFirstName('')
-              setLastName('')
-              setContactNo('')
-            }
-         }, [tableBooking.loggedIn, bookingHandlerToggle])
+               useEffect(() => {
+                setLoggedIn(tableBooking.loggedIn) 
+                
+                if (!tableBooking.loggedIn && !bookingHandlerToggle && !diffNo) {
+                    setFirstName('')
+                    setLastName('')
+                    setContactNo('')
+                  }
+               }, [tableBooking.loggedIn, bookingHandlerToggle])
 
          useEffect(() => {
            if (BookingTime && FirstName && ContactNo && tableBooking.loggedIn) setBookingHandlerToggle(true)
-
-           console.log(tableBooking.loggedIn, bookingHandlerToggle)
+ 
          },[tableBooking.loggedIn])
 
         
@@ -205,11 +235,11 @@ const timeSlotRef = useRef(true)
              }, {
              headers: { Authorization: `Bearer ${launch.outletListData.token || launch.token}`}}
            ).then(response => {
-            console.log(response)
+           
             if (response.data.errorCode === 1) {
                 dispatch(handleModalTitle(response.data.message))
              // setModalTitle(response.data.message)
-             // setBookingHandlerToggle(false)
+             setBookingHandlerToggle(false)
             }
         
             if (response.data.errorCode === 0) {
@@ -236,13 +266,14 @@ const timeSlotRef = useRef(true)
                
            // setModalTitle('')
            dispatch(handleModalTitle('Your Booking Success'))
+             setDiffNo(false)
             //setModalSave(!modalSave)
             setBookingHandlerToggle(false)  
               dispatch(getGuestTotalBooking({ContactNo, outletList:launch.outletListData, token}))
               dispatch(getGuestListHandler({ContactNo, outletList:launch.outletListData, token}))
-              setBookingDate('')
+              setBookingDate(d.toISOString().split('T')[0])
               setBookingTime('')
-              setNoOfGuest('')
+              setNoOfGuest(1)
           }
          
           })
@@ -250,36 +281,38 @@ const timeSlotRef = useRef(true)
            })
             }  
         
-          // return () => setBookingHandlerToggle(false)  
+           return () => setBookingHandlerToggle(false)  
 
         }, [tableBooking.loggedIn, bookingHandlerToggle]) 
   
         useEffect(() => {
             const tokenOption = launch.outletListData.token || token
             // GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetTimeSlotList?OutletCode=TERC&BookingDate=04-Aug-2022'
-            if (tokenOption && outletCode && bookingDate && timeSlotRef.current) {
-           
-                 axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
-                 params:{
-                   outletCode:outletCode,
-                   BookingDate:bookingDate
-                 },
-                 headers: { Authorization: `Bearer ${tokenOption}`},
-                  "Content-Type": "application/json"
+            if (tokenOption && outletCode && bookingDate && timeSlotRef.current) { 
+                  axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
+                  params:{
+                    outletCode:outletCode,
+                    BookingDate:bookingDate
+                  },
+                  headers: { Authorization: `Bearer ${tokenOption}`},
+                    "Content-Type": "application/json"
                   }
-                 ).then((response) => {   
-                  console.log(response)
+                  ).then((response) => {   
+                    console.log(response)
                   if (response.data.errorCode === 1) {
                     dispatch(handleModalTitle(response.data.message))
                   } 
                   setTimeSlotList(response.data.response)
-                 
-                 }).catch(error => console.log(error)) 
-                   timeSlotRef.current = false  
+                
+                  console.log( timeSlotRef.current)
+                  }).catch(error => console.log(error)) 
+                   
                 }
                  if (launch.outletListData.errorCode === 1) {
                    dispatch(handleModalTitle(launch.outletListData.message))
                  } 
+                  console.log(timeSlotRef.current)
+                 return () => timeSlotRef.current = false
             }, [launch.outletListData, outletCode, bookingDate, token])
          
                  const updateTableBookingData = () => {
@@ -299,7 +332,7 @@ const timeSlotRef = useRef(true)
                     }
 
                       const bookingSubmitHandler = () => {
-                        console.log(loggedIn)
+                     
                                if (!bookingDate) {
                                 dispatch(handleModalTitle('Kindly select Booking Date'))
                                } else if (!NoOfGuest) {
@@ -325,13 +358,15 @@ const timeSlotRef = useRef(true)
                         dispatch(sendOTP({ContactNo, token:launch.token}))
                         dispatch(handleModalTitle('OTP')) 
                         setBookingHandlerToggle(false)  
+                        updateTableBookingData()
                       }else if (ContactNo !== tableBooking.tableData.ContactNo) {
-                        dispatch(handleLogin(false))
+                        setDiffNo(true)
+                         dispatch(handleLogin(false)) // not to remove customer details while logout
+                         setBookingHandlerToggle(true) // not to remove customer details while logout
                         dispatch(sendOTP({ContactNo, token:launch.token}))
                         dispatch(handleBooking({...tableBooking.tableData, ContactNo}))
                         dispatch(handleModalTitle('OTP'))  
-                     
-                        alert('hi diff')
+                        updateTableBookingData()
                       }else {  
                          // otpHandler ()
                          // setErrorMessageOTP('')
@@ -353,20 +388,18 @@ const timeSlotRef = useRef(true)
                  <Row className="d-flex justify-content-center" >
                     <Col md={5} sm={5}>
                     <Row>
-                    <Col md={3} sm={5} style={isTabletOrMobile ? {maxWidth:'50%'} : { width:'40%'}}>
+                    <Col md={3} sm={5} style={isTabletOrMobile ? {maxWidth:'45%'} : { width:'40%'}}>
                     <Label for="date" style={ {width:'75px'}}>Date: *</Label> 
                      <Input type='date' className='p-1' name='date' required
                       style={isTabletOrMobile ? {fontSize:'11px', width:'100%', height:'30px'} : {width:'185px'}}
                       value={bookingDate}
                       min = {d.toISOString().split('T')[0]}
-                      onChange={e => {
-                       setBookingDate(e.target.value)
-                       timeSlotRef.current = true
-                     // console.log(`${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`, d.toISOString().split('T')[0])
-                     }} 
+                       onChange={e => { 
+                          setBookingDate(e.target.value) 
+                       }} 
                       />
                     </Col>
-                    <Col sm={2} style={isTabletOrMobile ? { maxWidth:'50%'} : { width:'60%'}}>     
+                    <Col sm={2} style={isTabletOrMobile ? { maxWidth:'55%'} : { width:'60%'}}>     
                     <Label for="noofguest" style={isTabletOrMobile ? {width:'100px'} : {width:'110px', padding:'0px'}}>No of Guest: *</Label> 
                     <Input type="number"
                     // class="form-control"  

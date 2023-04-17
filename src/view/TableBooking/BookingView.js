@@ -200,7 +200,7 @@ const BookingView = (props) => {
                 bookingStatusDetails && bookingStatusDetails.bookingDetails.showTableBookingLink &&
               <div style={{marginBottom:'0px'}}>
                 <small>
-                    <p onClick = {tableBookingHandler} style={{color:'blue', cursor:'pointer'}}>
+                    <p onClick = {props.viewTableBooking} style={{color:'blue', cursor:'pointer'}}>
                     Go To Table Booking
                     </p> 
                 </small></div>}

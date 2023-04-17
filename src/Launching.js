@@ -20,7 +20,7 @@ const Launching = () => {
   const [OrganizationId, setOrganizationId] = useState(launchData.paramData.organizationId) 
   //const [OrganizationName] = useState(searchParams.get("orgname"))
   const [propertyId, setPropertyId] = useState(launchData.paramData.propertyId)
-  const [propertyName, setPropertyName] = useState(launchData.paramData.propertyname) //searchParams.get("propname") wrong prop name from jay's api
+  const [propertyName, setPropertyName] = useState('') //searchParams.get("propname") wrong prop name from jay's api
   const [outletCode, setOutletCode] = useState(launchData.paramData.outletCode)
   const [remarks, setRemarks] = useState(launchData.paramData.remarks)
   const [token, setToken] = useState(launchData.token)  
@@ -32,17 +32,15 @@ const Launching = () => {
     const reDirect = useRef(false)
     const refOtDetails = useRef(false)
 
-// outletlet list should be called only for multiple property options avaialble
-//    useEffect(() =>  {
-//       if (outletCode === 'NONE' || !outletCode) { 
-//          if (propertyId && launchData.token) dispatch(getOutletList({PropertyId: propertyId  , token:launchData.token}))  
-//          console.log(launchData.token, outletCode === 'NONE', !outletCode)
-//        }  
-//  
-//  }, [propertyId,launchData.token, outletCode])
-    
-    
-     
+     //    outletlet list should be called only for multiple property options avaialble
+     //     useEffect(() =>  {
+     //       if (outletCode === 'NONE' || !outletCode) { 
+     //          if (propertyId && launchData.token) dispatch(getOutletList({PropertyId: propertyId  , token:launchData.token}))  
+     //          console.log(launchData.token, outletCode === 'NONE', !outletCode)
+     //         }  
+     //  
+     //    }, [propertyId,launchData.token, outletCode])
+      
      useEffect(() => {
       const favicon = document.getElementById("favicon");
       if (imageUrl) favicon.href = imageUrl
@@ -64,15 +62,14 @@ const Launching = () => {
 
     }, [launchData])
 
-    useEffect(() => { 
-       if (token && launchData.paramData.outletCode !== "NONE" && launchData.paramData.outletCode !== '' && !refOtDetails.current) {
-             dispatch(getOutletDetails({tokenOption:token, outletCode:launchData.paramData.outletCode}))
-             refOtDetails.current = true
-         } else {
-           console.log('No outlet Code')
-         }
-     }, [token, launchData.paramData])
-
+       useEffect(() => { 
+          if (token && launchData.paramData.outletCode !== "NONE" && launchData.paramData.outletCode !== '' && !refOtDetails.current) {
+                dispatch(getOutletDetails({tokenOption:token, outletCode:launchData.paramData.outletCode}))
+                refOtDetails.current = true
+            } else {
+              console.log('No outlet Code')
+            }
+        }, [token, launchData.paramData]) 
      
        useEffect(() => {
              if (launchData.outletDetails.outletDetails) {

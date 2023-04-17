@@ -15,7 +15,7 @@
            "Content-Type": "application/json"
           }
         ).then(res => {
-          console.log(res.data)
+         
           return res.data.response
         })
     return response
@@ -38,7 +38,7 @@
            builder
              .addCase(getPropertyList.fulfilled, (state, action) => {
                state.propertyData = action.payload
-               console.log(action.payload)
+              
                localStorage.setItem('propertyData', JSON.stringify(action.payload)) 
               // state.bookmarks = action.payload.bookmarks
              })

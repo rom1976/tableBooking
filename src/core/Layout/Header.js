@@ -63,7 +63,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
            if (launchData.token) {
             setToken(launchData.token)
            } 
-             console.log(launchData)
+             
         }, [launchData.outletDetails, launchData.token, launchData.outletData])
 
      useEffect(() => {
@@ -104,7 +104,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                     setPropertyCount(pr.length)  
                    if (property.propertyData.propertyList.length === 1 && token && outletListRef.current) { 
                       const [propertyObj] =  property.propertyData.propertyList
-                      console.log(propertyObj.propertyId, token) 
+                     
                       dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
                       dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
                       outletListRef.current = false
@@ -114,7 +114,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                           } 
                        } 
                  }
-               console.log(property.propertyData) 
+              
             },[property.propertyData.propertyList, token, propertyId])
 
           //     useEffect(() => {
@@ -152,9 +152,9 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                       setOutletCount(launchData.outletListData.outletList.length) 
                    if (launchData.outletListData.outletList.length === 1 ) {   
                          const [outl] = launchData.outletListData.outletList
-                          console.log(outl) 
+                         
                          // closeModalLink()
-                          console.log(outl.outletName)
+                        
                           setImageUrl(outl.imageUrl)
                           setOutletName(outl.outletName)
                           setOutletCode(outl.outletCode) 
@@ -162,18 +162,13 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
 
                           //sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:PropertyId, propertyName:propertyName, outletCode:outletcode, outletName:outletName, imageUrl:imgurl})) 
                    }  else if (launchData.outletListData.outletList.length > 1) {  
-                             // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''}))
-                             // console.log(outletArray)    
-                             //  console.log(outletList, OutletCode)
+                             // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''})) 
                            if (outletName === 'NONE' || outletName === '' || !outletName) { 
                                 dispatch(handleModalTitle('Select a Restaurant'))  
                             }  //else {
                             //    dispatch(handleOutletSelection({outletName:outletName, outletCode:outletCode, imageUrl:imageUrl}))
                         //    } 
-                   }}  
-                   console.log(tableBooking.selectedOutlet) 
-                   console.log(launchData.paramData)
-                   console.log(outletCode, outletName)
+                   }}   
                }, [launchData.outletListData.outletList])
 
                       useEffect(() => {      
@@ -185,13 +180,13 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                      setImageUrl(imgurl)
                                   
                                 }   
-                                console.log( launchData.outletDetails)
+                              
                          }, [outletDetails])
 
                        useEffect(() => {
                         const favicon = document.getElementById("favicon");
                         if (imageUrl) favicon.href = imageUrl
-                        console.log(imageUrl)
+                        
                        }, [imageUrl])
 
                  
@@ -206,6 +201,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                 {loggedIn ? <p   className='text-dark pe-1'
                onClick ={() => { 
                    localStorage.clear() 
+                   sessionStorage.clear()
                  dispatch(handleLogin(false))
                }}
               >Logout</p> :
@@ -231,7 +227,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
               >{outletName}
               { outletCount > 1 &&
                <span onClick={ ()=> {
-                console.log(propertyId, token)
+                
                 dispatch(getOutletList({propertyId, token})) 
                 dispatch(handleModalTitle('Select a Restaurant'))
                  //setModalOutlet(!modalOutlet) 

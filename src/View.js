@@ -12,6 +12,7 @@ import { Card, CardImg, CardBody, CardText , CardHeader, Badge} from 'reactstrap
 import Loading from './Loading';
 import ErrorModal from './view/TableBooking/Modals/ErrorModal';
 import BookingView from './view/TableBooking/BookingView';
+import TableBookingComp from './view/TableBooking/TableBookingComp';
 
 const View = (props) => {
   const launch = useSelector(state => state.launch)  
@@ -19,7 +20,8 @@ const View = (props) => {
   const [token, setToken] = useState(launch.token) 
   const [walkingStatusDetails, setWalkingStatusDetails] = useState('')  
   const [bookingId, setBookingId] = useState(props.BookingId) 
-  const [checkInId, setCheckInId] = useState(launch.paramData.remarks.split('|')[1])
+  const [checkInId, setCheckInId] = useState(props.checkInId)
+    //launch.paramData.remarks.split('|')[1])
   const [bookingType] = useState(props.BookingType)
   const [view, setView] = useState(0)
  
@@ -41,7 +43,10 @@ const View = (props) => {
     if (props.checkInId) setCheckInId(props.checkInId)
  }, [props.checkInId])
  
-  
+  const viewTableBooking = () => {
+    setView('table')
+  } 
+
    const walkingBookingStatusHandler = () => {
      //curl --location --request GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetWalkInStatusDetails?
      //PropertyId=10000000131000000002&OutletCode=HAMR&CheckInId=d6140b0bf91244f9b58e01e76bbda440'
@@ -238,7 +243,11 @@ const View = (props) => {
         )
        }
 
-    return ( 
+
+         if (view === 'table') {
+                 return <TableBookingComp setViewPage ={props.setViewPage}/>
+              } else
+               return ( 
         <Container fluid> 
             <Row >
          <Col> 
@@ -246,7 +255,7 @@ const View = (props) => {
            !view && !walkingStatusDetails && <Loading />
           }
           {
-           view === 1 && <BookingView PropertyId ={props.PropertyId} BookingId={props.BookingId} OutletCode={props.OutletCode}/> 
+           view === 1 && <BookingView PropertyId ={props.PropertyId} BookingId={props.BookingId} OutletCode={props.OutletCode} viewTableBooking={viewTableBooking}/> 
           }  
           {walkingStatusDetails && <WalkingStatusComponent />} 
          </Col>

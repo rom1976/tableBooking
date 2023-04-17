@@ -21,8 +21,7 @@ import BookingDetailsList from "./BookingDetailsList";
                 setToken(launch.outletListData.token)
               }
          }, [launch.outletListData])
-         
-
+          
               return (  
                      <Fragment>  
                          <BookingDetailsList  
