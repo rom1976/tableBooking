@@ -20,7 +20,7 @@ const View = (props) => {
   const [token, setToken] = useState(launch.token) 
   const [walkingStatusDetails, setWalkingStatusDetails] = useState('')  
   const [bookingId, setBookingId] = useState(props.BookingId) 
-  const [checkInId, setCheckInId] = useState(props.checkInId)
+  const [checkInId, setCheckInId] = useState(props.checkInId || launch.paramData.remarks.split('|')[1])
     //launch.paramData.remarks.split('|')[1])
   const [bookingType] = useState(props.BookingType)
   const [view, setView] = useState(0)
