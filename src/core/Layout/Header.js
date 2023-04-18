@@ -26,7 +26,7 @@ const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
 const [outletData, setOutletData] = useState(launchData.outletListData);
 const [propertyId, setPropertyId] = useState(launchData.paramData.propertyId)
 const [propertyName, setPropertyName] = useState('') //searchParams.get("propname") wrong prop name from jay's api
-const [outletCode, setOutletCode] = useState('')
+const [outletCode, setOutletCode] = useState(launchData.paramData.outletCode)
 const [outletName, setOutletName] =  useState('')
 const [imageUrl, setImageUrl] = useState('')
 const [outletCount, setOutletCount] = useState(0)
@@ -106,12 +106,19 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                       const [propertyObj] =  property.propertyData.propertyList
                      
                       dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
-                      dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
+                    if (token) dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
+
                       outletListRef.current = false
                     } else if (property.propertyData.propertyList.length > 1) {
-                        if (!propertyName || !propertyId) {
+                        if (!propertyId || propertyId === 'NONE') {
                              dispatch(handleModalTitle('Select a Location'))
-                          } 
+                          } else {
+                            const [propertyObj] =  property.propertyData.propertyList.filter(item => item.propertyId === propertyId)
+                            console.log(propertyObj)
+                            dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
+                         if (token) dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
+                            outletListRef.current = false
+                          }
                        } 
                  }
               
@@ -163,9 +170,14 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                           //sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:PropertyId, propertyName:propertyName, outletCode:outletcode, outletName:outletName, imageUrl:imgurl})) 
                    }  else if (launchData.outletListData.outletList.length > 1) {  
                              // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''})) 
-                           if (outletName === 'NONE' || outletName === '' || !outletName) { 
+                              if (outletCode === 'NONE' || !outletCode) { 
                                 dispatch(handleModalTitle('Select a Restaurant'))  
-                            }  //else {
+                              } else {
+                                const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode === outletCode)
+                                console.log(defaultOutletObj)  
+                                dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
+                              }
+                               //else {
                             //    dispatch(handleOutletSelection({outletName:outletName, outletCode:outletCode, imageUrl:imageUrl}))
                         //    } 
                    }}   
@@ -188,9 +200,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                         if (imageUrl) favicon.href = imageUrl
                         
                        }, [imageUrl])
-
-                 
-                      
+      
    return (
      <Fragment>  
       <CardHeader
