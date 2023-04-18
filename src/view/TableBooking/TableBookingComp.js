@@ -56,57 +56,7 @@ const [diffNo, setDiffNo] = useState(false)
           const [bookingDate, setBookingDate] = useState(d.toISOString().split('T')[0])
          
           const [timeSlotList, setTimeSlotList] = useState('')
- 
-
-                       //'https://dev.lucidits.com/LUCIDAPI/V1/GetTitleList'    
-                       const getTitleList  = () => {
-                     if (titleRef.current) axios.get(`${process.env.REACT_APP_BASE_API_URL}LUCIDAPI/V1/GetTitleList`,
-                        { 
-                        headers: { Authorization: `Bearer ${launch.token}`},
-                        "Content-Type": "application/json"
-                        } 
-                       ).then((response) => { 
-                       
-                       const list = response.data.response
-                       setOptionsTitle(() => list.titleList.map(title => ({value:title.titleId, label : title.titleName})))
-                      // console.log(response.data.response)
-                       }).catch(error => console.log(error))
-                       titleRef.current = false
-                     }
-        
-               useEffect(() => {  
-                //GET 'https://dev.lucidits.com/LUCIDAPI/V1/GetMobileCountryCode'
-                      if (token) { 
-                                  getTitleList()
-                                  //toggleRef.current = false
-                                 //  getPropertyHandler()  
-                            if (mobileCodeRef.current)  axios.get(`${process.env.REACT_APP_BASE_API_URL}LUCIDAPI/V1/GetMobileCountryCode`,
-                                 { 
-                               headers: { Authorization: `Bearer ${token}`},
-                               "Content-Type": "application/json"
-                               } 
-                              ).then((response) => { 
-                              // setMobileCountryCodeData(response.data.response)
-                                 const list = response.data.response
-                               setOptionsTelephoneCode(() => list.mobileCountryCodeList.map(code => ({value:code.countryCode, label : code.telephoneCode})))
-                            
-                              }).catch(error => console.log(error)) 
-      
-                              mobileCodeRef.current = false
-                          }
-          
-                  }, [token])
-
-     //    useEffect(() => {
-     //      if (launch.paramData) {
-     //               setPropertyName(launch.paramData.propertyName === "NONE" ? '' : launch.paramData.propertyName)
-     //               setOutletName(launch.paramData.outletName === "NONE" ? '' : launch.paramData.outletName)
-     //               setPropertyId(launch.paramData.propertyId === "NONE" ? '' : launch.paramData.propertyId)
-     //               setOutletCode(launch.paramData.outletCode === "NONE" ? '' : launch.paramData.outletCode)
-     //           }
-     //         
-     //    }, [launch.paramData])
- 
+  
               useEffect(() => {
                        if (tableBooking) setLoggedIn(tableBooking.loggedIn)
  
@@ -127,22 +77,20 @@ const [diffNo, setDiffNo] = useState(false)
                        if (sel.outletCode !== outletCode)  {
                            setOutletCode(sel.outletCode)  
                            timeSlotRef.current = true
-                           console.log('different outlet',  timeSlotRef.current, sel.outletCode === outletCode)
+                          console.log('different outlet',  timeSlotRef.current, sel.outletCode === outletCode)
                           } 
-                 }  
-               console.log(tableBooking)
-           
+                 }   
            }, [tableBooking.selectedOutlet.outletCode])
 
-            useEffect(() => {
-              if (outletCode){
-               //   timeSlotRef.current = !timeSlotRef.current
-             //    if (!timeSlotList || timeSlotList === '' || !timeSlotRef.current)  
-                timeSlotRef.current = true
-                console.log(timeSlotRef.current)
-              } 
-              
-            }, [outletCode, timeSlotList])
+         //   useEffect(() => {
+         //     if (outletCode){
+         //      //   timeSlotRef.current = !timeSlotRef.current
+         //    //    if (!timeSlotList || timeSlotList === '' || !timeSlotRef.current)  
+         //       timeSlotRef.current = true
+         //       console.log(timeSlotRef.current)
+         //     } 
+         //     
+         //   }, [outletCode, timeSlotList])
 
             useEffect(() => {
                if (bookingDate){
@@ -287,11 +235,14 @@ const [diffNo, setDiffNo] = useState(false)
   
         useEffect(() => {
             const tokenOption = launch.outletListData.token || token
+            if (tokenOption && tableBooking.selectedOutlet.outletCodetCode && bookingDate ) timeSlotRef.current = true
+
             // GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetTimeSlotList?OutletCode=TERC&BookingDate=04-Aug-2022'
-            if (tokenOption && outletCode && bookingDate && timeSlotRef.current) { 
-                  axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
+            if (tokenOption && tableBooking.selectedOutlet.outletCode && bookingDate && timeSlotRef.current) { 
+                    
+              axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
                   params:{
-                    outletCode:outletCode,
+                    outletCode:tableBooking.selectedOutlet.outletCode,
                     BookingDate:bookingDate
                   },
                   headers: { Authorization: `Bearer ${tokenOption}`},
@@ -303,7 +254,7 @@ const [diffNo, setDiffNo] = useState(false)
                     dispatch(handleModalTitle(response.data.message))
                   } 
                   setTimeSlotList(response.data.response)
-                
+                  timeSlotRef.current = false
                   console.log( timeSlotRef.current)
                   }).catch(error => console.log(error)) 
                    
@@ -311,9 +262,51 @@ const [diffNo, setDiffNo] = useState(false)
                  if (launch.outletListData.errorCode === 1) {
                    dispatch(handleModalTitle(launch.outletListData.message))
                  } 
-                  console.log(timeSlotRef.current)
-                 return () => timeSlotRef.current = false
-            }, [launch.outletListData, outletCode, bookingDate, token])
+                  
+
+             // return () => timeSlotRef.current = false
+            }, [tableBooking.selectedOutlet.outletCode, bookingDate, token, launch.outletListData.token])
+
+
+                       //'https://dev.lucidits.com/LUCIDAPI/V1/GetTitleList'    
+                       const getTitleList  = () => {
+                        if (titleRef.current) axios.get(`${process.env.REACT_APP_BASE_API_URL}LUCIDAPI/V1/GetTitleList`,
+                           { 
+                           headers: { Authorization: `Bearer ${launch.token}`},
+                           "Content-Type": "application/json"
+                           } 
+                          ).then((response) => { 
+                          
+                          const list = response.data.response
+                          setOptionsTitle(() => list.titleList.map(title => ({value:title.titleId, label : title.titleName})))
+                         // console.log(response.data.response)
+                          }).catch(error => console.log(error))
+                          titleRef.current = false
+                        }
+           
+                  useEffect(() => {  
+                   //GET 'https://dev.lucidits.com/LUCIDAPI/V1/GetMobileCountryCode'
+                         if (token) { 
+                                     getTitleList()
+                                     //toggleRef.current = false
+                                    //  getPropertyHandler()  
+                               if (mobileCodeRef.current)  axios.get(`${process.env.REACT_APP_BASE_API_URL}LUCIDAPI/V1/GetMobileCountryCode`,
+                                    { 
+                                  headers: { Authorization: `Bearer ${token}`},
+                                  "Content-Type": "application/json"
+                                  } 
+                                 ).then((response) => { 
+                                 // setMobileCountryCodeData(response.data.response)
+                                    const list = response.data.response
+                                  setOptionsTelephoneCode(() => list.mobileCountryCodeList.map(code => ({value:code.countryCode, label : code.telephoneCode})))
+                               
+                                 }).catch(error => console.log(error)) 
+         
+                                 mobileCodeRef.current = false
+                             }
+             
+                     }, [token])
+   
          
                  const updateTableBookingData = () => {
                       dispatch(handleBooking({
