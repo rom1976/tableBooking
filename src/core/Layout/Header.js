@@ -88,7 +88,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                   outletDetailsRef.current = false  
          }
         
-     }, [tableBooking.selectedOutlet, tableBooking.selectedProperty, tableBooking.loggedIn])
+     }, [tableBooking.selectedOutlet.outletCode, tableBooking.selectedProperty, tableBooking.loggedIn, launchData.outletListData.token])
         
        // for resetting while changing outleCode  
        useEffect(() => {
