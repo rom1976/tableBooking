@@ -2,12 +2,12 @@
 import { createSlice } from '@reduxjs/toolkit'
  
 const initialUser = () => {
-  const item = window.localStorage.getItem('userData')
+  const item = window.sessionStorage.getItem('userData')
   //** Parse stored json or if none return initialValue
   return item ? JSON.parse(item) : {}
 }
 const initialHeader = () => {
-    const item = window.localStorage.getItem('headerData')
+    const item = window.sessionStorage.getItem('headerData')
     //** Parse stored json or if none return initialValue
     return item ? JSON.parse(item) : {}
   }
@@ -22,17 +22,17 @@ export const authSlice = createSlice({
   reducers: {
     handleLogin: (state, action) => {
       state.userData = action.payload 
-      localStorage.setItem('userData', JSON.stringify(action.payload))  
+      sessionStorage.setItem('userData', JSON.stringify(action.payload))  
     },
     handleLogout: state => {
       state.userData = {}
      
-      localStorage.removeItem('userData')
+      sessionStorage.removeItem('userData')
       
     },
     headerUpdate: (state, action) => {
        state.headerData = action.payload
-       localStorage.setItem('headerData', JSON.stringify(action.payload))  
+       sessionStorage.setItem('headerData', JSON.stringify(action.payload))  
     }
   }
 })

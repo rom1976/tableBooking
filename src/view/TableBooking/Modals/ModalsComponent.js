@@ -11,8 +11,7 @@ import axios from "axios";
 import { handleBooking, handleLogin, handlePropertySelection, handleOutletSelection } from "../../../redux/tableBooking";
 import { handleModalTitle, sendOTP } from "../../../redux/modals";
 import { getOutletDetails, getOutletList } from "../../../redux/launch";
- 
-
+  
 const ModalsComponent = (props) => { 
     Modal.setAppElement('#root') 
     const dispatch = useDispatch()

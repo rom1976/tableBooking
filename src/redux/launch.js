@@ -110,7 +110,7 @@
           handleLogout: state => {
             state.paramData = {} 
             // ** Remove user, accessToken & refreshToken from localStorage
-            localStorage.removeItem('userData') 
+            sessionStorage.removeItem('userData') 
           }, 
           handleViewPage: (state, action) => {
             state.viewPage = action.payload 

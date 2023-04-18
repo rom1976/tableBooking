@@ -3,28 +3,28 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 const initialBooking = () => {
-  const item = window.localStorage.getItem('tableBooking')
+  const item = window.sessionStorage.getItem('tableBooking')
   //** Parse stored json or if none return initialValue
   return item ? JSON.parse(item) : {}
 }
 
 const initialLoggedIn = () => {
-  const item = window.localStorage.getItem('loggedIn')
+  const item = window.sessionStorage.getItem('loggedIn')
   //** Parse stored json or if none return initialValue
   return item ? JSON.parse(item) : false
 }
 const initialGuestList = () => {
-  const item = window.localStorage.getItem('guestList')
+  const item = window.sessionStorage.getItem('guestList')
   //** Parse stored json or if none return initialValue
   return item ? JSON.parse(item) : false
 }
 const initialProperty = () => {
-  const item = window.localStorage.getItem('property')
+  const item = window.sessionStorage.getItem('property')
   //** Parse stored json or if none return initialValue
   return item ? JSON.parse(item) : false
 }
 const initialOutlet = () => {
-  const item = window.localStorage.getItem('outlet')
+  const item = window.sessionStorage.getItem('outlet')
   //** Parse stored json or if none return initialValue
      console.log(JSON.parse(item))
   return item ? JSON.parse(item) : false
@@ -80,26 +80,26 @@ return res
     reducers: {
       handleBooking: (state, action) => {
         state.tableData = action.payload 
-        localStorage.setItem('tableBooking', JSON.stringify(action.payload)) 
+        sessionStorage.setItem('tableBooking', JSON.stringify(action.payload)) 
       },
       handleBookingClear: state => {
         state.tableData = {} 
-        // ** Remove user, accessToken & refreshToken from localStorage
-        localStorage.removeItem('tableBooking')
+        // ** Remove user, accessToken & refreshToken from sessionStorage
+        sessionStorage.removeItem('tableBooking')
       },
       handleLogin: (state, action) => {
          state.loggedIn = action.payload 
-          // ** Remove user, accessToken & refreshToken from localStorage
-         localStorage.setItem('loggedIn', JSON.stringify(action.payload)) 
+          // ** Remove user, accessToken & refreshToken from sessionStorage
+         sessionStorage.setItem('loggedIn', JSON.stringify(action.payload)) 
       },
       handlePropertySelection: (state, action) => {
            state.selectedProperty = action.payload
            console.log(action.payload)
-           localStorage.setItem('property', JSON.stringify(action.payload)) 
+           sessionStorage.setItem('property', JSON.stringify(action.payload)) 
       },
       handleOutletSelection: (state, action) => {
         state.selectedOutlet = action.payload
-        localStorage.setItem('outlet', JSON.stringify(action.payload)) 
+        sessionStorage.setItem('outlet', JSON.stringify(action.payload)) 
         console.log(action.payload)
        }
      },
@@ -108,7 +108,7 @@ return res
         .addCase(getGuestListHandler.fulfilled, (state, action) => {
           state.guestList = action.payload
           console.log(action.payload)  
-          localStorage.setItem('guestList', JSON.stringify(action.payload))  
+          sessionStorage.setItem('guestList', JSON.stringify(action.payload))  
           // state.bookmarks = action.payload.bookmarks
         })
         .addCase(getGuestTotalBooking.fulfilled, (state, action) => {

@@ -4,7 +4,7 @@
   // ** Axios Imports
   import axios from 'axios'
   const initialPropertyData = () => {
-    const item = window.localStorage.getItem('propertyData') 
+    const item = window.sessionStorage.getItem('propertyData') 
     //** Parse stored json or if none return initialValue
     return item ? JSON.parse(item) : {}
   }
@@ -39,7 +39,7 @@
              .addCase(getPropertyList.fulfilled, (state, action) => {
                state.propertyData = action.payload
               
-               localStorage.setItem('propertyData', JSON.stringify(action.payload)) 
+               sessionStorage.setItem('propertyData', JSON.stringify(action.payload)) 
               // state.bookmarks = action.payload.bookmarks
              })
      //  .addCase(updateBookmarked.fulfilled, (state, action) => {

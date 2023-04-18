@@ -184,13 +184,11 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                }, [launchData.outletListData.outletList])
 
                       useEffect(() => {      
-                           if (outletDetails && outletDetails.imageUrl) { 
-                    
+                           if (outletDetails && outletDetails.imageUrl) {  
                                   // setOutletCount(outletList.outletList.length)  
                                      const imgurl = outletDetails.imageUrl 
                                     // closeModalLink()
-                                     setImageUrl(imgurl)
-                                  
+                                     setImageUrl(imgurl)  
                                 }   
                               
                          }, [outletDetails])
