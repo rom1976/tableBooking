@@ -30,15 +30,15 @@
            suggestions: []
          },
          reducers: {
-           handleSearchQuery: (state, action) => {
-             state.query = action.payload
+           handleProperty: (state, action) => {
+            state.propertyData  = action.payload
+            sessionStorage.setItem('propertyData', JSON.stringify(action.payload)) 
            }
          },
          extraReducers: builder => {
            builder
              .addCase(getPropertyList.fulfilled, (state, action) => {
-               state.propertyData = action.payload
-              
+               state.propertyData = action.payload 
                sessionStorage.setItem('propertyData', JSON.stringify(action.payload)) 
               // state.bookmarks = action.payload.bookmarks
              })
@@ -64,6 +64,6 @@
     }
   })
 
-  export const { handleSearchQuery } = propertySlice.actions
+  export const { handleProperty } = propertySlice.actions
 
   export default propertySlice.reducer

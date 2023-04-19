@@ -27,7 +27,7 @@ const TableBookingComp = (props) => {
   const [propertyName, setPropertyName] = useState('')
   const [outletName, setOutletName] = useState('')
   const [propertyId, setPropertyId] = useState(tableBooking.selectedProperty.propertyId)
-  const [outletCode, setOutletCode] = useState(tableBooking.selectedOutlet.outletCode)
+  const [outletCode, setOutletCode] = useState('')
   const [NoOfGuest, setNoOfGuest] = useState(1)
   const [maxPax, setMaxPax] = useState(10)
   const [BookingTime, setBookingTime] = useState('')
@@ -44,7 +44,7 @@ const TableBookingComp = (props) => {
   const [Instruction, setInstruction] = useState('')
   const [loggedIn, setLoggedIn] = useState(tableBooking.loggedIn)
   const [bookingHandlerToggle, setBookingHandlerToggle] = useState(false) 
-//  const [saveToggle, setSaveToggle] = useState(false)
+  const [saveToggle, setSaveToggle] = useState(false)
  // const [outletList, setOutletList] = useState(launch.outletListData)
  const titleRef = useRef(true)
  const mobileCodeRef = useRef(true)
@@ -157,7 +157,7 @@ const [diffNo, setDiffNo] = useState(false)
                }, [tableBooking.loggedIn, bookingHandlerToggle])
 
          useEffect(() => {
-           if (BookingTime && FirstName && ContactNo && tableBooking.loggedIn) setBookingHandlerToggle(true)
+           if (BookingTime && FirstName && ContactNo && tableBooking.loggedIn && saveToggle) setBookingHandlerToggle(true)
  
          },[tableBooking.loggedIn])
 
@@ -211,7 +211,7 @@ const [diffNo, setDiffNo] = useState(false)
              headers: { Authorization: `Bearer ${launch.outletListData.token || launch.token}`}}
            ).then(res => {
             if (res.data.errorCode === 0) { 
-               
+               setSaveToggle(false)
            // setModalTitle('')
            dispatch(handleModalTitle('Your Booking Success'))
              setDiffNo(false)
@@ -235,12 +235,13 @@ const [diffNo, setDiffNo] = useState(false)
   
         useEffect(() => {
             const tokenOption = launch.outletListData.token || token
-            if (tokenOption && tableBooking.selectedOutlet.outletCodetCode && bookingDate ) timeSlotRef.current = true
+          //  if (tokenOption && tableBooking.selectedOutlet.outletCode && bookingDate ) timeSlotRef.current = true
 
+              console.log(tokenOption, tableBooking.selectedOutlet.outletCode, bookingDate, timeSlotRef.current)
             // GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetTimeSlotList?OutletCode=TERC&BookingDate=04-Aug-2022'
             if (tokenOption && tableBooking.selectedOutlet.outletCode && bookingDate && timeSlotRef.current) { 
                     
-              axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
+                axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
                   params:{
                     outletCode:tableBooking.selectedOutlet.outletCode,
                     BookingDate:bookingDate
@@ -262,8 +263,7 @@ const [diffNo, setDiffNo] = useState(false)
                  if (launch.outletListData.errorCode === 1) {
                    dispatch(handleModalTitle(launch.outletListData.message))
                  } 
-                  
-
+              
              // return () => timeSlotRef.current = false
             }, [tableBooking.selectedOutlet.outletCode, bookingDate, token, launch.outletListData.token])
 
@@ -532,7 +532,7 @@ const [diffNo, setDiffNo] = useState(false)
                    <Button style={{backgroundColor:'black'}} onClick={ () => {
                        // if ()
                        bookingSubmitHandler()
-                     // setSaveToggle(true)
+                      setSaveToggle(true)
                    }}>
                      Book Table
                    </Button>

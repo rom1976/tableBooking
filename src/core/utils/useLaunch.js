@@ -16,21 +16,19 @@ const useLaunch = () => {
     const [outletCode, setOutletCode] = useState('')
     const [outletName, setOutletName] = useState('')
     const [remarks, setRemarks] = useState('')  
-    const [token, setToken] = useState(launchData.token)
-    const [outletList, setOutletList] = useState(launchData.outletList)
+    const [token, setToken] = useState(launchData.token) 
     const refUrl = useRef(null)
     const refToken = useRef(null)
     
                 useEffect(() => {
                        if (!launchData.paramData.organizationId && !refUrl.current) { 
+                                 console.log(launchData.paramData.organizationId) 
                               dispatch(getOrgDetails(urlKey))
                                refUrl.current = true
                                if (!urlKey) {
                                    dispatch(handlePageId(0))
                                } 
-                            } 
-                            console.log(launchData.paramData.organizationId) 
-
+                            }  
                     }, [launchData.paramData.organizationId])
 
                      useEffect(() => {
@@ -56,7 +54,7 @@ const useLaunch = () => {
                 
             }, [OrganizationId, PropertyId, launchData.token])
  
-         return {outletList, propertyName,  outletCode, outletName, remarks, token}
+         return { propertyName,  outletCode, outletName, remarks, token}
   }
 
 export default useLaunch

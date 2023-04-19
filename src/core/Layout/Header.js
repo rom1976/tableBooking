@@ -11,8 +11,8 @@ import { Fragment } from "react";
 import ModalsComponent from "../../view/TableBooking/Modals/ModalsComponent";
 import { handleModalTitle } from "../../redux/modals";
 import { handleLogin, handleOutletSelection, handlePropertySelection } from "../../redux/tableBooking";
-import { getPropertyList } from "../../redux/propertyData";
-import { getOutletDetails, getOutletList } from "../../redux/launch";
+import { getPropertyList, handleProperty } from "../../redux/propertyData";
+import { getOutletDetails, getOutletList, handleOutletList } from "../../redux/launch";
  
 
 const Header = (props) => {
@@ -22,8 +22,7 @@ const property = useSelector(state => state.propertyList)
 const dispatch = useDispatch()
 const launchData = useSelector(state => state.launch) 
 const [token, setToken] = useState(launchData.token) 
-const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
-const [outletData, setOutletData] = useState(launchData.outletListData);
+const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' }) 
 const [propertyId, setPropertyId] = useState(launchData.paramData.propertyId)
 const [propertyName, setPropertyName] = useState('') //searchParams.get("propname") wrong prop name from jay's api
 const [outletCode, setOutletCode] = useState(launchData.paramData.outletCode)
@@ -37,7 +36,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
  const outletDetailsRef = useRef(true)
 
       useEffect(() => { 
-           if (launchData.outletData) setOutletData(launchData.outletListData)
+           
            if (launchData.outletDetails) setOutletDetails(launchData.outletDetails.outletDetails)
          //  if (launchData.paramData) { 
              // closeModalLink() 
@@ -75,54 +74,71 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                  setPropertyName(sel.propertyName)
                  setPropertyId(sel.propertyId)
                  }
-              
-              const sel = tableBooking.selectedOutlet
-              console.log(sel)
-              
-              setOutletName(sel.outletName)
-              setOutletCode(sel.outletCode)
-              setImageUrl(sel.imageUrl)
-              // for updating outlet details post outlet selection
-                if (sel.outletCode && launchData.outletListData.token && outletDetailsRef.current) {
-                  dispatch(getOutletDetails({outletCode:sel.outletCode, tokenOption:launchData.outletListData.token}))
-                  outletDetailsRef.current = false  
-         }
-        
-     }, [tableBooking.selectedOutlet.outletCode, tableBooking.selectedProperty, tableBooking.loggedIn, launchData.outletListData.token])
-        
-       // for resetting while changing outleCode  
-       useEffect(() => {
-            if (tableBooking.selectedOutlet.outletCode) {
-              outletDetailsRef.current = true
-            }
-            return () =>   outletDetailsRef.current = false
-       },[tableBooking.selectedOutlet.outletCode])
-     
-           useEffect(() => {  
-              if (property.propertyData.propertyList) { 
-                    const pr = property.propertyData.propertyList
-                    setPropertyCount(pr.length)  
-                   if (property.propertyData.propertyList.length === 1 && token && outletListRef.current) { 
-                      const [propertyObj] =  property.propertyData.propertyList
-                     
-                      dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
-                    if (token) dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
+                             //  tableBooking.selectedOutlet === '' for reset while selecting new property
+              if (tableBooking.selectedOutlet.outletCode !== 'NONE' || tableBooking.selectedOutlet.outletCode === '') {
+                       //  alert('Jiii')
+                       const sel = tableBooking.selectedOutlet
+                       console.log(sel) 
+                        setOutletName(sel.outletName)
+                        setOutletCode(sel.outletCode)
+                        setImageUrl(sel.imageUrl)
+             
+               }
 
-                      outletListRef.current = false
-                    } else if (property.propertyData.propertyList.length > 1) {
-                        if (!propertyId || propertyId === 'NONE') {
-                             dispatch(handleModalTitle('Select a Location'))
-                          } else {
-                            const [propertyObj] =  property.propertyData.propertyList.filter(item => item.propertyId === propertyId)
-                            console.log(propertyObj)
-                            dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
-                         if (token) dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
-                            outletListRef.current = false
-                          }
-                       } 
-                 }
+                // for updating outlet details post outlet selection
+                if (tableBooking.selectedOutlet.outletCode && launchData.outletListData.token && outletDetailsRef.current) {
+               //   dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
+                  outletDetailsRef.current = false  
+                }
+        
+     }, [tableBooking.selectedOutlet, tableBooking.selectedProperty, tableBooking.loggedIn, launchData.outletListData.token])
+        
+       // for resetting while changing outleCode
+       // Note : for different properties same outletCodes are repeated eg: Property 00002 - {"outletCode":"HAMR","outletName":"Hammered Dinein"} ,
+       // Property 000001 - {"outletCode":"HAMR","outletName":"HSR Dinein",}   
+  
+     
+           useEffect(() => {   
+                                 if (property.propertyData.propertyList) {  
+                                       const pr = property.propertyData.propertyList
+                                       setPropertyCount(pr.length)  
+                                       dispatch(handleOutletList(''))
+                                      // dispatch(handleOutletSelection({}))
+
+                                  //    if (token && tableBooking.selectedProperty.propertyId ) { 
+                                  //        console.log(tableBooking.selectedProperty.propertyId, property.propertyData.propertyList)
+                                  //     //   dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token}))
+                                  //        outletListRef.current = false 
+                                       
+                                     //   } 
+                                      if (!tableBooking.selectedProperty.propertyId) {
+                                               if (property.propertyData.propertyList.length === 1 && token && outletListRef.current) { 
+                                                    const [propertyObj] =  property.propertyData.propertyList 
+                                                       dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
+                                                      
+                                                     if (token) {
+                                                          dispatch(getOutletList({propertyId:propertyObj.propertyId, token})) 
+                                                          outletListRef.current = false
+                                                        }  
+                                                 } else if (property.propertyData.propertyList.length > 1) {
+                                               if (!propertyId || propertyId === 'NONE') {
+                                                    dispatch(handleModalTitle('Select a Location'))
+                                                  } else {
+                                                    const [propertyObj] =  property.propertyData.propertyList.filter(item => item.propertyId === propertyId)
+                                               
+                                                     dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
+                                                       if (token) {
+                                                            dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
+                                                              outletListRef.current = false
+                                                     }
+                                             }
+                                           
+                                        }
+                                      }
+                 
+                }
               
-            },[property.propertyData.propertyList, token, propertyId])
+            },[property.propertyData.propertyList, token, tableBooking.selectedProperty.propertyId])
 
           //     useEffect(() => {
           //      if ((!propertyId || propertyId === "NONE") && (propertyList && propertyList.propertyList.length === 1))  { 
@@ -152,36 +168,42 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
             //} 
             //   if (propertyList)  setPropertyCount(propertyList.propertyList.length)
   //    }, [propertyList])
- 
- 
-       useEffect(() => {      
-            if (launchData.outletListData.outletList) {    
-                      setOutletCount(launchData.outletListData.outletList.length) 
-                   if (launchData.outletListData.outletList.length === 1 ) {   
-                         const [outl] = launchData.outletListData.outletList
-                         
-                         // closeModalLink()
-                        
-                          setImageUrl(outl.imageUrl)
-                          setOutletName(outl.outletName)
-                          setOutletCode(outl.outletCode) 
-                          dispatch(handleOutletSelection({outletName:outl.outletName, outletCode:outl.outletCode, imageUrl:outl.imageUrl}))
+  
+       useEffect(() => {  
+               
+                        if (launchData.outletListData.outletList) {  
+                             console.log(launchData.outletListData.outletList)  
+                            setOutletCount(launchData.outletListData.outletList.length) 
 
-                          //sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:PropertyId, propertyName:propertyName, outletCode:outletcode, outletName:outletName, imageUrl:imgurl})) 
-                   }  else if (launchData.outletListData.outletList.length > 1) {  
-                             // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''})) 
-                              if (outletCode === 'NONE' || !outletCode) { 
-                                dispatch(handleModalTitle('Select a Restaurant'))  
-                              } else {
-                                const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode === outletCode)
-                                console.log(defaultOutletObj)  
-                                dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
-                              }
-                               //else {
-                            //    dispatch(handleOutletSelection({outletName:outletName, outletCode:outletCode, imageUrl:imageUrl}))
-                        //    } 
-                   }}   
-               }, [launchData.outletListData.outletList])
+                             if(!tableBooking.selectedOutlet.outletCode || tableBooking.selectedOutlet.outletCode === '')  {  
+                                    console.log(launchData.outletListData.outletList.length) 
+                              
+                                 if (launchData.outletListData.outletList.length === 1 ) {  
+                                     
+                                     const [outl] = launchData.outletListData.outletList 
+                                     dispatch(handleModalTitle(''))  
+                                   //   setImageUrl(outl.imageUrl)
+                                    //  setOutletName(outl.outletName)
+                                    //  setOutletCode(outl.outletCode) 
+                                        dispatch(handleOutletSelection({outletName:outl.outletName, outletCode:outl.outletCode, imageUrl:outl.imageUrl}   ))
+
+                                      //sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:PropertyId, propertyName:propertyName, outletCode:outletcode, outletName:outletName, imageUrl:imgurl})) 
+                                 }  else if (launchData.outletListData.outletList.length > 1) {  
+                                     
+                                         // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''})) 
+                                          if (outletCode === 'NONE' || !outletCode ||  tableBooking.selectedOutlet.outletCode === '') { 
+                                            dispatch(handleModalTitle('Select a Restaurant'))  
+                                          } else {
+                                            const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode === outletCode)
+                                          
+                                            dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
+                                          }
+                                           //else {
+                                     //    dispatch(handleOutletSelection({outletName:outletName, outletCode:outletCode, imageUrl:imageUrl}))
+                            } 
+                      }}  
+                   // } 
+               }, [launchData.outletListData.outletList,  tableBooking.selectedOutlet.outletCode])
 
                       useEffect(() => {      
                            if (outletDetails && outletDetails.imageUrl) {  
@@ -248,9 +270,12 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                
                  { propertyCount > 1  && 
                    <span  
-                   onClick={ ()=> {
-                    dispatch(getPropertyList(token))
-                  // setModalProperty(!modalProperty)
+                   onClick={ ()=> { 
+                   // dispatch(handlePropertySelection({}))
+                  //  dispatch(handleOutletList(''))
+
+                  //  dispatch(getPropertyList(token)) 
+                    // setModalProperty(!modalProperty)
                    dispatch(handleModalTitle('Select a Location'))
                  }} 
                  style={{color:'#2ECC71', textDecoration:'none', padding:'1px'}}>  

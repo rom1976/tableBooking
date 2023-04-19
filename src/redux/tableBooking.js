@@ -114,7 +114,7 @@ return res
         .addCase(getGuestTotalBooking.fulfilled, (state, action) => {
           state.guestTotalBooking = action.payload
           console.log(action.payload)  
-         // localStorage.setItem('guestList', JSON.stringify(action.payload))  
+         // sessionStorage.setItem('guestList', JSON.stringify(action.payload))  
           // state.bookmarks = action.payload.bookmarks
         })
       }

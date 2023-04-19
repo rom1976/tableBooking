@@ -10,7 +10,7 @@ import { Check } from "react-feather";
 import axios from "axios"; 
 import { handleBooking, handleLogin, handlePropertySelection, handleOutletSelection } from "../../../redux/tableBooking";
 import { handleModalTitle, sendOTP } from "../../../redux/modals";
-import { getOutletDetails, getOutletList } from "../../../redux/launch";
+import { getOutletDetails, getOutletList, handleOutletList } from "../../../redux/launch";
   
 const ModalsComponent = (props) => { 
     Modal.setAppElement('#root') 
@@ -229,7 +229,11 @@ const ModalsComponent = (props) => {
                        setOutletCode('')
                        setOutletName('')
                        dispatch(handlePropertySelection({propertyName:prop.propertyName, propertyId:prop.propertyId}))
-                       dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''}))
+                       // call here outletlist based on property selection
+                       // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''}))
+
+                         dispatch(handleOutletList(''))
+                         dispatch(handleOutletSelection({}))
                        dispatch(getOutletList({propertyId:prop.propertyId, token:launch.token}))
                        }
                       }
@@ -262,7 +266,7 @@ const ModalsComponent = (props) => {
                    closeModalLink()
                    setModalTitle('')  
                    dispatch(handleOutletSelection({outletName:outlet.outletName, outletCode:outlet.outletCode, imageUrl:outlet.imageUrl}))    
-                   dispatch(getOutletDetails({outletCode:outlet.outletCode, tokenOption:launch.outletListData.token})) 
+                   dispatch(getOutletDetails({outletCode:outlet.outletCode, tokenOption:launch.outletListData.token}))  
                   }
                   }
                  >{outlet.outletName}</Button> 
