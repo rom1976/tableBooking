@@ -75,7 +75,8 @@ const ModalsComponent = (props) => {
         function closeModalLink() {  
                     setIsOpenLink(false) 
                 //    setModalTitle('')  
-                   dispatch(handleModalTitle(''))
+              if (modalTitle !== 'Select a Location') dispatch(handleModalTitle(''))
+              
             if (modalTitle === 'Your Booking Success')  setSaveToggle(true)  
         } 
         useEffect(() => {
@@ -172,7 +173,7 @@ const ModalsComponent = (props) => {
                 }    
                       }
               
-       }
+       } 
   
           useEffect(() => {
        
@@ -202,8 +203,7 @@ const ModalsComponent = (props) => {
          }
       
     }, [modalTitle])
-        
-       
+   
     useEffect(() => {
      if(props.modalTitle) dispatch(handleModalTitle(props.modalTitle))
         
@@ -234,7 +234,7 @@ const ModalsComponent = (props) => {
 
                          dispatch(handleOutletList(''))
                          dispatch(handleOutletSelection({}))
-                       dispatch(getOutletList({propertyId:prop.propertyId, token:launch.token}))
+                         dispatch(getOutletList({propertyId:prop.propertyId, token:launch.token}))
                        }
                       }
                      >{prop.propertyName}</Button> 

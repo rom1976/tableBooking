@@ -50,6 +50,7 @@ const TableBookingComp = (props) => {
  const mobileCodeRef = useRef(true)
  const propertyRef = useRef(true)
 const outletDetailsRef = useRef(true)
+const outletListRef = useRef(true)
 const timeSlotRef = useRef(true)
 const [diffNo, setDiffNo] = useState(false) 
           const d = new Date()
@@ -74,11 +75,11 @@ const [diffNo, setDiffNo] = useState(false)
                   if (sel.outletCode) { 
                       setOutletName(sel.outletName)
                     
-                       if (sel.outletCode !== outletCode)  {
+                    //   if (sel.outletCode !== outletCode)  {
                            setOutletCode(sel.outletCode)  
                            timeSlotRef.current = true
-                          console.log('different outlet',  timeSlotRef.current, sel.outletCode === outletCode)
-                          } 
+                          console.log('different outlet or not ',  timeSlotRef.current, sel.outletCode === outletCode)
+                       //   } 
                  }   
            }, [tableBooking.selectedOutlet.outletCode])
 
@@ -109,12 +110,21 @@ const [diffNo, setDiffNo] = useState(false)
                    propertyRef.current = false
               }
 
-             if(launch.paramData.outletCode === 'NONE' || !launch.paramData.outletCode || !outletCode && launch.token){
+             if((!tableBooking.selectedProperty.propertyId && launch.paramData.outletCode === 'NONE' || !launch.paramData.outletCode || !outletCode || outletCode === 'NONE') && launch.token){
               
-              //  dispatch(getOutletList({PropertyId:launch.paramData.propertyId, token:launch.token})) 
+               if (launch.paramData.propertyId && tableBooking.selectedProperty.propertyId === '') {
+                    dispatch(getOutletList({propertyId:launch.paramData.propertyId, token:launch.token})) 
+                    outletListRef.current = false
+                  }
               }
- 
-          }, [launch.token, launch.paramData])
+                // whenever page refresh happening outlet was not called, since outletcodes cane be similar, propertyId change can be used
+              if (tableBooking.selectedProperty.propertyId && launch.token){
+                dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token:launch.token})) 
+                outletListRef.current = false    
+             console.log(tableBooking.selectedProperty.propertyId)
+              }
+          
+          }, [launch.token, launch.paramData, launch.paramData.propertyId, tableBooking.selectedProperty.propertyId])
             
           useEffect(() => {
             
@@ -234,7 +244,7 @@ const [diffNo, setDiffNo] = useState(false)
         }, [tableBooking.loggedIn, bookingHandlerToggle]) 
   
         useEffect(() => {
-            const tokenOption = launch.outletListData.token || token
+            const tokenOption = launch.outletListData.token
           //  if (tokenOption && tableBooking.selectedOutlet.outletCode && bookingDate ) timeSlotRef.current = true
 
               console.log(tokenOption, tableBooking.selectedOutlet.outletCode, bookingDate, timeSlotRef.current)
@@ -262,10 +272,10 @@ const [diffNo, setDiffNo] = useState(false)
                 }
                  if (launch.outletListData.errorCode === 1) {
                    dispatch(handleModalTitle(launch.outletListData.message))
-                 } 
-              
+                 }  
+
              // return () => timeSlotRef.current = false
-            }, [tableBooking.selectedOutlet.outletCode, bookingDate, token, launch.outletListData.token])
+            }, [tableBooking.selectedOutlet.outletCode, bookingDate, launch.outletListData.token])
 
 
                        //'https://dev.lucidits.com/LUCIDAPI/V1/GetTitleList'    
