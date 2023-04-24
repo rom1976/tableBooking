@@ -6,13 +6,12 @@ import Header from "./Header";
 
 const Layout = (props) => { 
        const [modalTitle, setModalTitle] = useState()
-
+ 
     return (
-         <Card>
-               
+         <Card> 
                 <Header setModalTitle={setModalTitle}/>
                     {props.children}
-                <Footer outletData = {props.outletData} modalTitle={modalTitle}/>
+                <Footer outletData = {props.outletData} modalTitle={modalTitle} isOpenBL={props.isOpenBL}/>
                
          </Card>
  

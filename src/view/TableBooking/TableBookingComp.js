@@ -377,10 +377,9 @@ const [diffNo, setDiffNo] = useState(false)
                           updateTableBookingData()        
                      } 
                    }  
-                   
-         
+                    
          return(
-            <Layout outletData = {outletDetails}>
+            <Layout outletData = {outletDetails}  isOpenBL = {props.isOpenBL}>
              {(!propertyName && !outletName) && <Spinner animation="grow" variant="primary" />}
              { propertyId && outletCode &&
               <CardBody
@@ -559,7 +558,7 @@ const [diffNo, setDiffNo] = useState(false)
                  optionsTelephoneCode={optionsTelephoneCode}
                  />
              </Layout>
-  )
+         )
 }
 
 export default TableBookingComp

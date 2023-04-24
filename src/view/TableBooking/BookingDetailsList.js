@@ -55,13 +55,12 @@ const BookingDetailsList = (props) => {
             }, [tableBooking.guestList])
 
             useEffect(() => {
-            
-              if(tableBooking.guestTotalBooking.totalBooking)  {
-               setTotalBooking(tableBooking.guestTotalBooking.totalBooking) 
-
+               if(tableBooking.guestTotalBooking.totalBooking)  {
+               setTotalBooking(tableBooking.guestTotalBooking.totalBooking)  
               }
+
               console.log(tableBooking.guestTotalBooking)
-         }, [tableBooking.guestTotalBooking.totalBooking])
+            }, [tableBooking.guestTotalBooking.totalBooking])
 
            useEffect(() => {
                if (launch) { 
@@ -112,11 +111,13 @@ const BookingDetailsList = (props) => {
                 }
 
           useEffect(() => { 
-               if(isOpenBL && tableBooking.loggedIn && ContactNo) {
+               if((isOpenBL || props.isOpenBL) && tableBooking.loggedIn && ContactNo) {
                   getGuestListHandler()
                   document.body.style.overflow = "visible"
-               }
-            }, [isOpenBL, tableBooking.loggedIn, currentPage, props.outletList, props.token, ContactNo])
+                   
+               } 
+               console.log(props.isOpenBL, isOpenBL, tableBooking.loggedIn, ContactNo)
+            }, [props.isOpenBL, isOpenBL, tableBooking.loggedIn, currentPage, props.outletList, props.token, ContactNo])
 
             const cancelHandler = (outcode, propertyId, bookingId) => {
                   setSpinnerToggle(bookingId)
@@ -242,8 +243,8 @@ const BookingDetailsList = (props) => {
                      console.log(item.outletCode) 
                      dispatch(handleViewPage(<View PropertyId= {item.propertyId} BookingId = {item.bookingId} OutletCode ={item.outletCode} tableBookingHandler = {tableBookingHandler}/>))
                      dispatch(handlePageId(2))
-                     // sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:item.propertyId, propertyName: propertyName, outletName: outletName, outletCode:item.outletCode,imageUrl:imageUrl,}))
-                     
+                     // sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:item.propertyId, propertyName: propertyName, 
+                     // outletName: outletName, outletCode:item.outletCode,imageUrl:imageUrl,})) 
                  }
               }
                >View</p>
@@ -288,8 +289,7 @@ const BookingDetailsList = (props) => {
           previousLinkClassName='page-link'
           previousClassName='page-item prev'
           containerClassName='pagination react-paginate pagination-danger pagination-sm'
-          style={{maxWidth:'50%'}}
-         
+          style={{maxWidth:'50%'}} 
         /> 
         </div>
        </div> 

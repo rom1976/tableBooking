@@ -6,7 +6,7 @@ import FooterAdd from "../../view/TableBooking/FooterAdd"
 const Footer = (props) => {
     return (
         <CardFooter style={{backgroundColor:'white', border:'none'}}>
-               <FooterAdd outletData = {props.outletData} modalTitle ={props.modalTitle}/>
+               <FooterAdd outletData = {props.outletData} modalTitle ={props.modalTitle} isOpenBL={props.isOpenBL}/>
              <Row className="d-flex justify-content-center border-top fixed-bottom" 
                style={{background:'#EAEAEA'}}>
                  <div style={{width:'160px'}}>

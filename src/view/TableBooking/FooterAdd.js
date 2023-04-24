@@ -2,11 +2,11 @@ import React, { Fragment } from "react"
  
 import BookingDetails from "./BookingDetails"
 
-const FooterAdd = () => {
+const FooterAdd = (props) => {
   
     return (
         <Fragment>
-              <BookingDetails/>   
+              <BookingDetails isOpenBL = {props.isOpenBL}/>   
         </Fragment>
       
     )

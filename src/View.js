@@ -3,7 +3,7 @@ import axios from 'axios';
 import {FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faCalendarXmark, faClipboard } from '@fortawesome/free-regular-svg-icons'
 import { GiPartyPopper } from "react-icons/gi";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {  Row, Col, Container, CardFooter  
    } from 'reactstrap'
 import {RefreshCcw} from 'react-feather';
@@ -13,8 +13,10 @@ import Loading from './Loading';
 import ErrorModal from './view/TableBooking/Modals/ErrorModal';
 import BookingView from './view/TableBooking/BookingView';
 import TableBookingComp from './view/TableBooking/TableBookingComp';
+import { handlePageId, handleViewPage } from './redux/launch';
 
 const View = (props) => {
+  const dispatch = useDispatch()
   const launch = useSelector(state => state.launch)  
   const [paramData, setParamData] = useState(launch.paramData) 
   const [token, setToken] = useState(launch.token) 
@@ -45,6 +47,8 @@ const View = (props) => {
  
   const viewTableBooking = () => {
     setView('table')
+   // dispatch(handleViewPage(''))
+   dispatch(handlePageId(1))
   } 
 
    const walkingBookingStatusHandler = () => {
@@ -97,12 +101,12 @@ const View = (props) => {
       <div className="d-flex justify-content-center m-0 ">
         <span style={{marginBottom:'0px', color:'black'}}>
         <small> Your Current Wait List Number </small> 
-        <Link to = ""  onClick = {() => {
+        <span onClick = {() => {
            walkinRef.current = true
            walkingBookingStatusHandler() 
            }} style={{textDecoration:'none', color:'black', paddingLeft:'7px'}}> 
            {walkingStatusDetails && walkingStatusDetails.walkInDetails.showRefresh && <RefreshCcw size={15} strokeWidth='3px' className='rotate'/>}
-         </Link> 
+         </span> 
        </span> 
       </div>  
       <div className="d-flex justify-content-center m-0 mt-5"> 
@@ -232,7 +236,7 @@ const View = (props) => {
           </CardText>
             <Row className="d-flex justify-content-center border-top fixed-bottom" 
            style={{background:'#EAEAEA'}}>
-           <div style={{width:'150px'}}>
+           <div style={{width:'160px'}}>
               <small><em style={{fontSize:'11px', color:'#8D8D8D'}}>Powered by {' '}</em><Link to= "" 
               onClick={() => window.open('https://lucidpos.com/', '_blank')}
               style={{fontWeight:'normal', fontSize:'11px', color:'#8D8D8D'}}><strong>LUCID POS</strong></Link></small> 
@@ -241,11 +245,9 @@ const View = (props) => {
          </CardBody>
          </Card> 
         )
-       }
-
-
+       } 
          if (view === 'table') {
-                 return <TableBookingComp setViewPage ={props.setViewPage}/>
+                 return <TableBookingComp setViewPage ={props.setViewPage} isOpenBL={true}/>
               } else
                return ( 
         <Container fluid> 

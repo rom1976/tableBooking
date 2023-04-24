@@ -14,6 +14,7 @@ import BookingDetailsList from "./BookingDetailsList";
      const [token, setToken] = useState(launch.outletListData)
          useEffect(() => {
               setLoggedIn(tableBooking.loggedIn)
+            
          }, [tableBooking.loggedIn])
 
          useEffect(() => {
@@ -30,6 +31,7 @@ import BookingDetailsList from "./BookingDetailsList";
                            modalError={modalError}
                            loggedIn={loggedIn}  
                            token ={token || launch.token}
+                           isOpenBL={props.isOpenBL}
                          />  
                      </Fragment> 
                  ) 
