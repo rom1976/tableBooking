@@ -14,6 +14,7 @@ import ErrorModal from './view/TableBooking/Modals/ErrorModal';
 import BookingView from './view/TableBooking/BookingView';
 import TableBookingComp from './view/TableBooking/TableBookingComp';
 import { handlePageId, handleViewPage } from './redux/launch';
+import { handleIsOpenBL } from './redux/tableBooking';
 
 const View = (props) => {
   const dispatch = useDispatch()
@@ -46,10 +47,12 @@ const View = (props) => {
  }, [props.checkInId])
  
   const viewTableBooking = () => {
-    setView('table')
-   // dispatch(handleViewPage(''))
-   dispatch(handlePageId(1))
-  } 
+       setView('table')
+      // dispatch(handleViewPage('')) 
+       props.tableBookingHandler()
+       dispatch(handleIsOpenBL(true)) 
+    
+    } 
 
    const walkingBookingStatusHandler = () => {
      //curl --location --request GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetWalkInStatusDetails?

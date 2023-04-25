@@ -6,7 +6,7 @@ const LoadTableBooking = () => {
      const TableBooking = lazy(() => import('./TableBooking'));
 
      return (
-     <Suspense fallback={<Loading />}> 
+     <Suspense> 
      <TableBooking />
     </Suspense>
     )

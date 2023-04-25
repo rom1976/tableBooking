@@ -2,33 +2,33 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const initialBooking = () => {
-  const item = window.sessionStorage.getItem('tableBooking')
-  //** Parse stored json or if none return initialValue
-  return item ? JSON.parse(item) : {}
-}
+   const initialBooking = () => {
+     const item = window.sessionStorage.getItem('tableBooking')
+     //** Parse stored json or if none return initialValue
+     return item ? JSON.parse(item) : {}
+   }
 
-const initialLoggedIn = () => {
-  const item = window.sessionStorage.getItem('loggedIn')
-  //** Parse stored json or if none return initialValue
-  return item ? JSON.parse(item) : false
-}
-const initialGuestList = () => {
-  const item = window.sessionStorage.getItem('guestList')
-  //** Parse stored json or if none return initialValue
-  return item ? JSON.parse(item) : false
-}
-const initialProperty = () => {
-  const item = window.sessionStorage.getItem('property')
-  //** Parse stored json or if none return initialValue
-  return item ? JSON.parse(item) : false
-}
-const initialOutlet = () => {
-  const item = window.sessionStorage.getItem('outlet')
-  //** Parse stored json or if none return initialValue
-     console.log(JSON.parse(item))
-  return item ? JSON.parse(item) : false
-}
+    const initialLoggedIn = () => {
+      const item = window.sessionStorage.getItem('loggedIn')
+      //** Parse stored json or if none return initialValue
+      return item ? JSON.parse(item) : false
+    }
+    const initialGuestList = () => {
+      const item = window.sessionStorage.getItem('guestList')
+      //** Parse stored json or if none return initialValue
+      return item ? JSON.parse(item) : false
+    }
+    const initialProperty = () => {
+      const item = window.sessionStorage.getItem('property')
+      //** Parse stored json or if none return initialValue
+      return item ? JSON.parse(item) : false
+    }
+    const initialOutlet = () => {
+      const item = window.sessionStorage.getItem('outlet')
+      //** Parse stored json or if none return initialValue
+         console.log(JSON.parse(item))
+      return item ? JSON.parse(item) : false
+    }
 
 export const getGuestTotalBooking = createAsyncThunk('tableBooking/getGuestTotalBooking', async (obj) => {
   const res = axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTotalBooking`, {
@@ -76,6 +76,7 @@ return res
       guestTotalBooking:'',
       selectedProperty:initialProperty(),
       selectedOutlet:initialOutlet(),
+      isOpenBL:false
     },
     reducers: {
       handleBooking: (state, action) => {
@@ -101,6 +102,9 @@ return res
         state.selectedOutlet = action.payload
         sessionStorage.setItem('outlet', JSON.stringify(action.payload)) 
         console.log(action.payload)
+       },
+       handleIsOpenBL: (state, action) => {
+        state.isOpenBL = action.payload  
        }
      },
      extraReducers: builder => {
@@ -120,6 +124,6 @@ return res
       }
    })
 
-export const { handleBooking, handleBookingClear, handleLogin, handlePropertySelection, handleOutletSelection } = tableSlice.actions
+export const { handleBooking, handleBookingClear, handleLogin, handlePropertySelection, handleOutletSelection, handleIsOpenBL } = tableSlice.actions
 
 export default tableSlice.reducer

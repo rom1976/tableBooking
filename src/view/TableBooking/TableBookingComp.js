@@ -13,6 +13,7 @@ import { handleModalTitle, sendOTP } from "../../redux/modals";
 import ModalsComponent from "./Modals/ModalsComponent";
 import { getPropertyList } from "../../redux/propertyData";
 import { getOutletList } from "../../redux/launch";
+import Header from "../../core/Layout/Header";
 //import { faL } from "@fortawesome/free-solid-svg-icons";
 
 const TableBookingComp = (props) => {
@@ -65,6 +66,7 @@ const [diffNo, setDiffNo] = useState(false)
                              const sel = tableBooking.selectedProperty
                              setPropertyName(sel.propertyName)
                              setPropertyId(sel.propertyId)
+                         if (sel.propertyId !== propertyId) timeSlotRef.current = true
                         }
                       
            }, [tableBooking.selectedProperty])
@@ -76,8 +78,7 @@ const [diffNo, setDiffNo] = useState(false)
                       setOutletName(sel.outletName)
                     
                     //   if (sel.outletCode !== outletCode)  {
-                           setOutletCode(sel.outletCode)  
-                           timeSlotRef.current = true
+                           setOutletCode(sel.outletCode)   
                           console.log('different outlet or not ',  timeSlotRef.current, sel.outletCode === outletCode)
                        //   } 
                  }   
@@ -110,21 +111,21 @@ const [diffNo, setDiffNo] = useState(false)
                    propertyRef.current = false
               }
 
-             if((!tableBooking.selectedProperty.propertyId && launch.paramData.outletCode === 'NONE' || !launch.paramData.outletCode || !outletCode || outletCode === 'NONE') && launch.token){
-              
-               if (launch.paramData.propertyId && tableBooking.selectedProperty.propertyId === '') {
-                    dispatch(getOutletList({propertyId:launch.paramData.propertyId, token:launch.token})) 
-                    outletListRef.current = false
-                  }
-              }
-                // whenever page refresh happening outlet was not called, since outletcodes cane be similar, propertyId change can be used
-              if (tableBooking.selectedProperty.propertyId && launch.token){
-                dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token:launch.token})) 
-                outletListRef.current = false    
-             console.log(tableBooking.selectedProperty.propertyId)
-              }
+         //    if((!tableBooking.selectedProperty.propertyId && launch.paramData.outletCode === 'NONE' || !launch.paramData.outletCode || !outletCode || outletCode === 'NONE') && launch.token){
+         //     
+         //       if (launch.paramData.propertyId && tableBooking.selectedProperty.propertyId === '') {
+         //            dispatch(getOutletList({propertyId:launch.paramData.propertyId, token:launch.token})) 
+         //            outletListRef.current = false
+         //          }
+         //     }
+         //       // whenever page refresh happening outlet was not called, since outletcodes cane be similar, propertyId change can be used
+         //     if (tableBooking.selectedProperty.propertyId && launch.token){
+         //       dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token:launch.token})) 
+         //       outletListRef.current = false    
+         //    console.log(tableBooking.selectedProperty.propertyId)
+            //  }
           
-          }, [launch.token, launch.paramData, launch.paramData.propertyId, tableBooking.selectedProperty.propertyId])
+            }, [launch.token, launch.paramData, launch.paramData.propertyId, tableBooking.selectedProperty.propertyId])
             
           useEffect(() => {
             
@@ -173,7 +174,7 @@ const [diffNo, setDiffNo] = useState(false)
 
         
            useEffect(() => {
-            if ((tableBooking.loggedIn && bookingHandlerToggle && BookingTime && bookingDate && BookingTime)){
+            if ((tableBooking.loggedIn && bookingHandlerToggle && BookingTime && bookingDate && BookingTime && launch.outletListData.token)){
               axios.post(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}ValidateTableBooking`, 
               {
                 OutletCode:outletCode,
@@ -191,7 +192,7 @@ const [diffNo, setDiffNo] = useState(false)
                 },
                 Instruction,
              }, {
-             headers: { Authorization: `Bearer ${launch.outletListData.token || launch.token}`}}
+             headers: { Authorization: `Bearer ${launch.outletListData.token}`}}
            ).then(response => {
            
             if (response.data.errorCode === 1) {
@@ -201,7 +202,7 @@ const [diffNo, setDiffNo] = useState(false)
             }
         
             if (response.data.errorCode === 0) {
-              axios.post(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}SaveTableBooking`, 
+               axios.post(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}SaveTableBooking`, 
               {
                 OutletCode:outletCode,
                 "BookingDate":bookingDate, // "04-Aug-2022",
@@ -218,7 +219,7 @@ const [diffNo, setDiffNo] = useState(false)
                 },
                 Instruction,
              }, {
-             headers: { Authorization: `Bearer ${launch.outletListData.token || launch.token}`}}
+             headers: { Authorization: `Bearer ${launch.outletListData.token}`}}
            ).then(res => {
             if (res.data.errorCode === 0) { 
                setSaveToggle(false)
@@ -239,9 +240,9 @@ const [diffNo, setDiffNo] = useState(false)
            })
             }  
         
-           return () => setBookingHandlerToggle(false)  
+          //  return () => setBookingHandlerToggle(false)  
 
-        }, [tableBooking.loggedIn, bookingHandlerToggle]) 
+        }, [tableBooking.loggedIn, bookingHandlerToggle, launch.outletListData.token]) 
   
         useEffect(() => {
             const tokenOption = launch.outletListData.token
@@ -260,13 +261,14 @@ const [diffNo, setDiffNo] = useState(false)
                     "Content-Type": "application/json"
                   }
                   ).then((response) => {   
+                    timeSlotRef.current = false
                     console.log(response)
                   if (response.data.errorCode === 1) {
                     dispatch(handleModalTitle(response.data.message))
                   } 
                   setTimeSlotList(response.data.response)
-                  timeSlotRef.current = false
-                  console.log( timeSlotRef.current)
+                
+                 
                   }).catch(error => console.log(error)) 
                    
                 }
@@ -274,7 +276,7 @@ const [diffNo, setDiffNo] = useState(false)
                    dispatch(handleModalTitle(launch.outletListData.message))
                  }  
 
-             // return () => timeSlotRef.current = false
+            //  return () => timeSlotRef.current = false
             }, [tableBooking.selectedOutlet.outletCode, bookingDate, launch.outletListData.token])
 
 
@@ -365,7 +367,7 @@ const [diffNo, setDiffNo] = useState(false)
                       }else if (ContactNo !== tableBooking.tableData.ContactNo) {
                         setDiffNo(true)
                          dispatch(handleLogin(false)) // not to remove customer details while logout
-                         setBookingHandlerToggle(true) // not to remove customer details while logout
+                        setBookingHandlerToggle(true) // not to remove customer details while logout
                         dispatch(sendOTP({ContactNo, token:launch.token}))
                         dispatch(handleBooking({...tableBooking.tableData, ContactNo}))
                         dispatch(handleModalTitle('OTP'))  
@@ -373,14 +375,17 @@ const [diffNo, setDiffNo] = useState(false)
                       }else {  
                          // otpHandler ()
                          // setErrorMessageOTP('')
-                          setBookingHandlerToggle(true)  
+                          setBookingHandlerToggle(true)   
                           updateTableBookingData()        
                      } 
                    }  
                     
          return(
             <Layout outletData = {outletDetails}  isOpenBL = {props.isOpenBL}>
-             {(!propertyName && !outletName) && <Spinner animation="grow" variant="primary" />}
+               <Header/>
+             { 
+             // (!propertyName && !outletName) && <Spinner animation="grow" variant="primary" />
+            }
              { propertyId && outletCode &&
               <CardBody
               className="mt-1"

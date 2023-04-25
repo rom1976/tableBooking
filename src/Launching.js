@@ -122,7 +122,7 @@ const Launching = () => {
         return <CheckIn/>
       } else if(pageId === 1) {
         return <LoadTableBooking setViewPage={setViewPage}/>
-      } else return <Loading />
+      } // else return <Loading />
 }
 
 export default Launching

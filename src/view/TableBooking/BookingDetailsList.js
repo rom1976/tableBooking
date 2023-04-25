@@ -1,5 +1,5 @@
 import axios from "axios"
-import React, { Fragment, useEffect, useState } from "react"
+import React, { Fragment, useEffect, useRef, useState } from "react"
 import { MinusCircle, PlusCircle, RefreshCcw } from "react-feather"
 import { useSelector } from "react-redux"
 
@@ -10,13 +10,14 @@ import { handlePageId, handleViewPage } from "../../redux/launch";
 import View from "../../View";
 import ReactPaginate from "react-paginate"
 import { handleModalTitle } from "../../redux/modals"
+import { handleIsOpenBL } from "../../redux/tableBooking"
 
 const BookingDetailsList = (props) => {
     const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' })
     const tableBooking = useSelector(state => state.tableBooking) 
     const launch = useSelector(state => state.launch)
     const [token, setToken] = useState(launch.token)
-    const [isOpenBL, setIsOpenBL] = useState(false)
+    const [isOpenBL, setIsOpenBL] = useState(tableBooking.isOpenBL)
     const [currentPage, setCurrentPage] = useState(1)
     const [totalBooking, setTotalBooking] = useState('')
     const [GuestTableBookingList, setGuestTableBookingList] = useState('')
@@ -27,7 +28,7 @@ const BookingDetailsList = (props) => {
     const [spinnerToggle, setSpinnerToggle] = useState(false)
     // const [bookingHandlerToggle, setBookingHandlerToggle] = useState(false)
     const handlePagination = page => setCurrentPage(page.selected + 1)
-    
+    const guestRef = useRef(false)
           useEffect(() => { 
               const bkng = tableBooking.tableData
                  // setBookingDate(bkng.bookingDate)
@@ -41,10 +42,11 @@ const BookingDetailsList = (props) => {
                  // setEmailId(bkng.EmailId)
                  // setInstruction(bkng.Instruction)
                  if (tableBooking.loggedIn === false) {
-                  setGuestTableBookingList('') 
-                  setIsOpenBL(false) 
+                    setGuestTableBookingList('') 
+                    setIsOpenBL(false) 
+                     
                  }      
-
+         
       }, [tableBooking])
 
             useEffect(() => {
@@ -69,6 +71,7 @@ const BookingDetailsList = (props) => {
              //    setOrganizationId(launch.paramData.organizationId)
                }
            }, [launch])
+
            useEffect(() => {
               if (launch.outletListData) {
                 setToken(launch.outletListData.token)
@@ -79,8 +82,15 @@ const BookingDetailsList = (props) => {
              const tableBookingHandler = () => {
                  dispatch(handleViewPage(''))
                  dispatch(handlePageId(1))
-             }    
-                    const getGuestListHandler = () => {
+               // getGuestListHandler()
+                 
+              //   guestRef.current = true
+               }   
+               useEffect(() => {
+                    guestRef.current = true
+               }, [currentPage]) 
+
+           const getGuestListHandler = () => {
                      
                    //GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetGuestTotalBooking?ContactNo=9738854149'
                    axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTotalBooking`, {
@@ -106,18 +116,19 @@ const BookingDetailsList = (props) => {
                 ).then((res) =>{ 
                   setGuestTableBookingList(res.data.response)
                   window.scrollTo(0, document.body.scrollHeight);
-
+                  guestRef.current = false
                 })
                 }
-
+ 
           useEffect(() => { 
-               if((isOpenBL || props.isOpenBL) && tableBooking.loggedIn && ContactNo) {
+               if(isOpenBL && tableBooking.loggedIn && ContactNo && guestRef.current) {
                   getGuestListHandler()
-                  document.body.style.overflow = "visible"
-                   
+                  document.body.style.overflow = "visible"  
+                  guestRef.current = false
                } 
-               console.log(props.isOpenBL, isOpenBL, tableBooking.loggedIn, ContactNo)
-            }, [props.isOpenBL, isOpenBL, tableBooking.loggedIn, currentPage, props.outletList, props.token, ContactNo])
+              
+                console.log(isOpenBL, tableBooking.loggedIn, ContactNo)
+            }, [isOpenBL, tableBooking.loggedIn, currentPage, props.outletList, props.token, ContactNo])
 
             const cancelHandler = (outcode, propertyId, bookingId) => {
                   setSpinnerToggle(bookingId)
@@ -172,11 +183,11 @@ const BookingDetailsList = (props) => {
                      // setModalError(!modalError)
                 } else if (tableBooking.loggedIn === false) {  
                         dispatch(handleModalTitle('Kindly Login to View Bookings'))
-             //  setModalTitle('Kindly Login to View Bookings')
-            //setModalError(!modalError)
+                //  setModalTitle('Kindly Login to View Bookings')
+               //setModalError(!modalError)
            } else {
-             setIsOpenBL(!isOpenBL) 
-           }
+                setIsOpenBL(!isOpenBL)  
+              }
             }}
           ><u>Your Bookings</u>
           </p>{totalBooking && tableBooking.loggedIn && <span>({totalBooking})</span>}<div
@@ -215,8 +226,8 @@ const BookingDetailsList = (props) => {
        }
        <tbody>
         {(!GuestTableBookingList && isOpenBL) &&  <tr><td colSpan={5} className='text-center'><Spinner animation="grow" variant="primary" /></td></tr>} 
-       {
-        (GuestTableBookingList && isOpenBL) && GuestTableBookingList.bookingList.map((item, id) => {
+        {
+         (GuestTableBookingList && isOpenBL) && GuestTableBookingList.bookingList.map((item, id) => {
           
          return(
           <tr key={id}>
@@ -242,11 +253,11 @@ const BookingDetailsList = (props) => {
                onClick={() => {   
                      console.log(item.outletCode) 
                      dispatch(handleViewPage(<View PropertyId= {item.propertyId} BookingId = {item.bookingId} OutletCode ={item.outletCode} tableBookingHandler = {tableBookingHandler}/>))
-                     dispatch(handlePageId(2))
+                     dispatch(handlePageId(2)) 
                      // sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:item.propertyId, propertyName: propertyName, 
                      // outletName: outletName, outletCode:item.outletCode,imageUrl:imageUrl,})) 
-                 }
-              }
+                  }
+                }
                >View</p>
             </td>
             <td>
@@ -265,8 +276,7 @@ const BookingDetailsList = (props) => {
          }
         </tbody>
        </Table>
-          </div>
-       
+          </div> 
        <div className={isTabletOrMobile ? "d-flex justify-content-center" :"d-flex justify-content-end pagin"} style={{width:'100%'}}>
         <div sm='2'> 
         <ReactPaginate

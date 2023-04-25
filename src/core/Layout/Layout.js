@@ -9,7 +9,8 @@ const Layout = (props) => {
  
     return (
          <Card> 
-                <Header setModalTitle={setModalTitle}/>
+              { //  <Header setModalTitle={setModalTitle}/> 
+             }
                     {props.children}
                 <Footer outletData = {props.outletData} modalTitle={modalTitle} isOpenBL={props.isOpenBL}/>
                

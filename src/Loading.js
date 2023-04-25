@@ -5,7 +5,9 @@ const Loading = () => {
     return (
        
                 <Row className="d-flex justify-content-center mt-5 ">  
-                    <Spinner animation='border' color="primary" />  
+                    {
+                    // <Spinner animation color="primary" />  
+                  } 
                 </Row> 
            
     )

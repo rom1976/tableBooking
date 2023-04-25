@@ -113,46 +113,50 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
          }, [tableBooking.selectedOutlet.outletCode,launchData.outletListData.token])
 
            useEffect(() => {   
-                                 if (property.propertyData.propertyList) {  
-                                       const pr = property.propertyData.propertyList
-                                       setPropertyCount(pr.length)  
-                                       dispatch(handleOutletList(''))
-                                      // dispatch(handleOutletSelection({}))
-
-                                  //    if (token && tableBooking.selectedProperty.propertyId ) { 
-                                  //        console.log(tableBooking.selectedProperty.propertyId, property.propertyData.propertyList)
-                                  //     //   dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token}))
-                                  //        outletListRef.current = false 
-                                       
-                                     //   } 
-                                      if (!tableBooking.selectedProperty.propertyId) {
-                                               if (property.propertyData.propertyList.length === 1 && token && outletListRef.current) { 
-                                                    const [propertyObj] =  property.propertyData.propertyList 
-                                                       dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
-                                                      
-                                                     if (token) {
-                                                          dispatch(getOutletList({propertyId:propertyObj.propertyId, token})) 
-                                                          outletListRef.current = false
-                                                        }  
-                                                 } else if (property.propertyData.propertyList.length > 1) {
-                                               if (!propertyId || propertyId === 'NONE') {
-                                                    dispatch(handleModalTitle('Select a Location'))
-                                                  } else {
-                                                    const [propertyObj] =  property.propertyData.propertyList.filter(item => item.propertyId === propertyId)
-                                               
-                                                     dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
-                                                       if (token) {
-                                                            dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
-                                                              outletListRef.current = false
-                                                     }
-                                             }
-                                           
-                                        }
-                                      }
-                 
-                }
+                            if (property.propertyData.propertyList) {  
+                                  const pr = property.propertyData.propertyList
+                                  setPropertyCount(pr.length)  
+                                  dispatch(handleOutletList(''))
+                                 // dispatch(handleOutletSelection({})) 
+                              // whenever page refresh happening outlet was not called, since outletcodes cane be similar, propertyId change can be used
+                               if (tableBooking.selectedProperty.propertyId && launchData.token && outletListRef.current) {
+                                   alert()
+                                   dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token:launchData.token})) 
+                                 
+                                   console.log(tableBooking.selectedProperty.propertyId)
+                                } else if (!tableBooking.selectedProperty.propertyId) {
+                                          if ((launchData.paramData.outletCode === 'NONE' || !launchData.paramData.outletCode || !outletCode || outletCode === 'NONE') && launchData.token) {
+                
+                                           if (launchData.paramData.propertyId && tableBooking.selectedProperty.propertyId === '') {
+                                                dispatch(getOutletList({propertyId:launchData.paramData.propertyId, token:launchData.token})) 
+                                                outletListRef.current = false
+                                              }}
+                                           if (property.propertyData.propertyList.length === 1 && token && outletListRef.current) { 
+                                               const [propertyObj] =  property.propertyData.propertyList 
+                                                  dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
+                                                 
+                                                if (token) {
+                                                     dispatch(getOutletList({propertyId:propertyObj.propertyId, token})) 
+                                                     outletListRef.current = false
+                                                   }  
+                                            } else if (property.propertyData.propertyList.length > 1) {
+                                          if (!propertyId || propertyId === 'NONE') {
+                                               dispatch(handleModalTitle('Select a Location'))
+                                             } else {
+                                               const [propertyObj] =  property.propertyData.propertyList.filter(item => item.propertyId === propertyId) 
+                                                dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
+                                                  if (token) {
+                                                       dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
+                                                         outletListRef.current = false
+                                                }
+                                           }
+                                      
+                                       }
+                                 }
+                                 outletListRef.current = false    
+                          }
               
-            },[property.propertyData.propertyList, token, tableBooking.selectedProperty.propertyId])
+                },[property.propertyData.propertyList, token, tableBooking.selectedProperty.propertyId])
 
           //     useEffect(() => {
           //      if ((!propertyId || propertyId === "NONE") && (propertyList && propertyList.propertyList.length === 1))  { 

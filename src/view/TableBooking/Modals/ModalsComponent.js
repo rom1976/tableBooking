@@ -43,7 +43,7 @@ const ModalsComponent = (props) => {
     const [propertyList, setpropertyList] = useState(property.propertyData.propertyList)
     const [propertyName, setPropertyName] = useState('') 
     const [propertyId, setPropertyId] = useState('')
-    const [outletCode, setOutletCode] = useState('')
+    const [outletCode, setOutletCode] = useState(tableBooking.selectedOutlet.outletCode)
     const  [outletName, setOutletName] = useState('')
     const [imageUrl, setImageUrl] = useState('')
     const [outletList, setOutletList] = useState('')
@@ -74,27 +74,38 @@ const ModalsComponent = (props) => {
     
         function closeModalLink() {  
                     setIsOpenLink(false) 
+                    dispatch(handleModalTitle('')) 
                 //    setModalTitle('')  
-              if (modalTitle !== 'Select a Location') dispatch(handleModalTitle(''))
+                //  this has issues with multiple clicks and closing modal 
+               //    if (modalTitle !== 'Select a Location') {
+               //    setTimeout(() => dispatch(handleModalTitle(''),500))
+               //    }
               
             if (modalTitle === 'Your Booking Success')  setSaveToggle(true)  
-        } 
-        useEffect(() => {
-          setOptionsTelephoneCode(props.optionsTelephoneCode)
-        }, [props.optionsTelephoneCode])
+        }
+
+         useEffect(() => {
+           setOptionsTelephoneCode(props.optionsTelephoneCode)
+         }, [props.optionsTelephoneCode])
   
-        useEffect(() => {
+         useEffect(() => {
            if (launch.outletListData) {
              setOutletList(launch.outletListData)
+
+             if (!outletCode && launch.outletListData.outletList && launch.outletListData.outletList.length > 1) {
+                //  alert('greater length')      
+                setModalTitle('Select a Restaurant')
+             }
            }
+   
         }, [launch.outletListData])
 
         useEffect(() => { 
             const bkng = tableBooking.tableData
             console.log(bkng)
                // setBookingDate(bkng.bookingDate)
-              //  setNoOfGuest(bkng.NoOfGuest)
-              //  setBookingTime(bkng.BookingTime)
+               //  setNoOfGuest(bkng.NoOfGuest)
+               //  setBookingTime(bkng.BookingTime)
                // setSelectedTitle()
                 setFirstName(bkng.FirstName)
                 setLastName(bkng.LastName)
@@ -145,10 +156,9 @@ const ModalsComponent = (props) => {
            )
           }
            
-         const otpHandler = () => {     
+    const otpHandler = () => {     
              // GET 'https://dev.lucidits.com/LUCIDAPI/V1/SendOTP?OTPFor=4&MobileNo=9738854149'
-              if ((!loggedIn && (ContactNo || contactNoRef.current))) dispatch(sendOTP({ContactNo, contactNoRef: contactNoRef.current, token: outletList.token || token}))
-            
+           if ((!loggedIn && (ContactNo || contactNoRef.current))) dispatch(sendOTP({ContactNo, contactNoRef: contactNoRef.current, token: launch.outletListData.token})) 
          }
  
     const contactHandler = (no) => {       
@@ -407,7 +417,7 @@ const ModalsComponent = (props) => {
               dispatch(handleBooking({...tableBooking.tableData, ContactNo}))
               //bookingHandlerToggle && 
               dispatch(handleModalTitle("Login Success"))
-              props.setBookingHandlerToggle(true)
+             // props.setBookingHandlerToggle(true)
                 !bookingHandlerToggle && setTimeout(() => {
                closeModalLink()
               }, 500);
