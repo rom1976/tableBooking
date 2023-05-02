@@ -17,7 +17,8 @@ const BookingDetailsList = (props) => {
     const tableBooking = useSelector(state => state.tableBooking) 
     const launch = useSelector(state => state.launch)
     const [token, setToken] = useState(launch.token)
-    const [isOpenBL, setIsOpenBL] = useState(tableBooking.isOpenBL)
+    const modalsData = useSelector(state => state.modals) 
+    const [isOpenBL, setIsOpenBL] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
     const [totalBooking, setTotalBooking] = useState('')
     const [GuestTableBookingList, setGuestTableBookingList] = useState('')
@@ -45,9 +46,10 @@ const BookingDetailsList = (props) => {
                     setGuestTableBookingList('') 
                     setIsOpenBL(false) 
                      
-                 }      
-         
+                 }     
       }, [tableBooking])
+
+   
 
             useEffect(() => {
             
@@ -60,7 +62,7 @@ const BookingDetailsList = (props) => {
                if(tableBooking.guestTotalBooking.totalBooking)  {
                setTotalBooking(tableBooking.guestTotalBooking.totalBooking)  
               }
-
+            
               console.log(tableBooking.guestTotalBooking)
             }, [tableBooking.guestTotalBooking.totalBooking])
 
@@ -81,13 +83,13 @@ const BookingDetailsList = (props) => {
 
              const tableBookingHandler = () => {
                  dispatch(handleViewPage(''))
-                 dispatch(handlePageId(1))
+                dispatch(handlePageId(1))
                // getGuestListHandler()
                  
               //   guestRef.current = true
                }   
-               useEffect(() => {
-                    guestRef.current = true
+               useEffect(() => { 
+                  guestRef.current = true
                }, [currentPage]) 
 
            const getGuestListHandler = () => {
@@ -119,14 +121,24 @@ const BookingDetailsList = (props) => {
                   guestRef.current = false
                 })
                 }
+
+                useEffect(() => {
+                  if (tableBooking.isOpenBL) {
+                 !isOpenBL && setIsOpenBL(tableBooking.isOpenBL)
+                 //  getGuestListHandler()
+                  }
+
+             },[tableBooking.isOpenBL])
  
           useEffect(() => { 
                if(isOpenBL && tableBooking.loggedIn && ContactNo && guestRef.current) {
-                  getGuestListHandler()
-                  document.body.style.overflow = "visible"  
-                  guestRef.current = false
-               } 
-              
+                    guestRef.current = false 
+                   console.log(GuestTableBookingList)
+                   getGuestListHandler()
+                   document.body.style.overflow = "visible"  
+                 
+                 } 
+               
                 console.log(isOpenBL, tableBooking.loggedIn, ContactNo)
             }, [isOpenBL, tableBooking.loggedIn, currentPage, props.outletList, props.token, ContactNo])
 
@@ -165,10 +177,10 @@ const BookingDetailsList = (props) => {
               } 
 
               useEffect(() => {
-                    if (props.modalTitle === 'Your Booking Success') getGuestListHandler()
+                    if (modalsData.modalTitle === 'Your Booking Success' && isOpenBL) getGuestListHandler()
                       
                    // return () => setModalTitle('')
-              }, [props.modalTitle])
+              }, [modalsData.modalTitle])
            
     return (
         <Fragment>
@@ -185,7 +197,7 @@ const BookingDetailsList = (props) => {
                         dispatch(handleModalTitle('Kindly Login to View Bookings'))
                 //  setModalTitle('Kindly Login to View Bookings')
                //setModalError(!modalError)
-           } else {
+              } else {
                 setIsOpenBL(!isOpenBL)  
               }
             }}

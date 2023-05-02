@@ -52,7 +52,7 @@ const TableBookingComp = (props) => {
  const propertyRef = useRef(true)
 const outletDetailsRef = useRef(true)
 const outletListRef = useRef(true)
-const timeSlotRef = useRef(true)
+const timeSlotRef = useRef(false)
 const [diffNo, setDiffNo] = useState(false) 
           const d = new Date()
           const [bookingDate, setBookingDate] = useState(d.toISOString().split('T')[0])
@@ -66,7 +66,8 @@ const [diffNo, setDiffNo] = useState(false)
                              const sel = tableBooking.selectedProperty
                              setPropertyName(sel.propertyName)
                              setPropertyId(sel.propertyId)
-                         if (sel.propertyId !== propertyId) timeSlotRef.current = true
+                            // timeSlotRef.current = true
+                            //tried this way for only property changed but outlet remain the same
                         }
                       
            }, [tableBooking.selectedProperty])
@@ -75,12 +76,15 @@ const [diffNo, setDiffNo] = useState(false)
             const sel = tableBooking.selectedOutlet
              // setBookingDate(d.toISOString().split('T')[0]) 
                   if (sel.outletCode) { 
-                      setOutletName(sel.outletName)
-                    
+                        if (!timeSlotList) {
+                          timeSlotRef.current = true 
+                        }
+
+                      setOutletName(sel.outletName) 
                     //   if (sel.outletCode !== outletCode)  {
                            setOutletCode(sel.outletCode)   
                           console.log('different outlet or not ',  timeSlotRef.current, sel.outletCode === outletCode)
-                       //   } 
+                       //  } 
                  }   
            }, [tableBooking.selectedOutlet.outletCode])
 
@@ -133,7 +137,7 @@ const [diffNo, setDiffNo] = useState(false)
               setOutletDetails(launch.outletDetails)
               launch.outletDetails.outletDetails.maximumPax && setMaxPax(Number(launch.outletDetails.outletDetails.maximumPax))
              }  
-
+            
           }, [launch.outletDetails.outletDetails])
 
  
@@ -157,6 +161,10 @@ const [diffNo, setDiffNo] = useState(false)
                } 
              }, [tableBooking.tableData])
 
+             useEffect(() => {
+                  if (tableBooking.timeSlotList) setTimeSlotList(tableBooking.timeSlotList)
+             },[tableBooking.timeSlotList])
+
                useEffect(() => {
                 setLoggedIn(tableBooking.loggedIn) 
                 
@@ -171,9 +179,10 @@ const [diffNo, setDiffNo] = useState(false)
            if (BookingTime && FirstName && ContactNo && tableBooking.loggedIn && saveToggle) setBookingHandlerToggle(true)
  
          },[tableBooking.loggedIn])
-
-        
+ 
            useEffect(() => {
+             console.log(tableBooking.loggedIn, bookingHandlerToggle, BookingTime, bookingDate, BookingTime, launch.outletListData.token)
+
             if ((tableBooking.loggedIn && bookingHandlerToggle && BookingTime && bookingDate && BookingTime && launch.outletListData.token)){
               axios.post(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}ValidateTableBooking`, 
               {
@@ -198,7 +207,7 @@ const [diffNo, setDiffNo] = useState(false)
             if (response.data.errorCode === 1) {
                 dispatch(handleModalTitle(response.data.message))
              // setModalTitle(response.data.message)
-             setBookingHandlerToggle(false)
+               setBookingHandlerToggle(false)
             }
         
             if (response.data.errorCode === 0) {
@@ -228,8 +237,6 @@ const [diffNo, setDiffNo] = useState(false)
              setDiffNo(false)
             //setModalSave(!modalSave)
             setBookingHandlerToggle(false)  
-              dispatch(getGuestTotalBooking({ContactNo, outletList:launch.outletListData, token}))
-              dispatch(getGuestListHandler({ContactNo, outletList:launch.outletListData, token}))
               setBookingDate(d.toISOString().split('T')[0])
               setBookingTime('')
               setNoOfGuest(1)
@@ -251,8 +258,8 @@ const [diffNo, setDiffNo] = useState(false)
               console.log(tokenOption, tableBooking.selectedOutlet.outletCode, bookingDate, timeSlotRef.current)
             // GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetTimeSlotList?OutletCode=TERC&BookingDate=04-Aug-2022'
             if (tokenOption && tableBooking.selectedOutlet.outletCode && bookingDate && timeSlotRef.current) { 
-                    
-                axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
+                   timeSlotRef.current = false 
+                  axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
                   params:{
                     outletCode:tableBooking.selectedOutlet.outletCode,
                     BookingDate:bookingDate
@@ -261,8 +268,7 @@ const [diffNo, setDiffNo] = useState(false)
                     "Content-Type": "application/json"
                   }
                   ).then((response) => {   
-                    timeSlotRef.current = false
-                    console.log(response)
+                    
                   if (response.data.errorCode === 1) {
                     dispatch(handleModalTitle(response.data.message))
                   } 
@@ -270,13 +276,11 @@ const [diffNo, setDiffNo] = useState(false)
                 
                  
                   }).catch(error => console.log(error)) 
-                   
+                 
                 }
                  if (launch.outletListData.errorCode === 1) {
                    dispatch(handleModalTitle(launch.outletListData.message))
-                 }  
-
-            //  return () => timeSlotRef.current = false
+                 }   
             }, [tableBooking.selectedOutlet.outletCode, bookingDate, launch.outletListData.token])
 
 
@@ -402,6 +406,7 @@ const [diffNo, setDiffNo] = useState(false)
                       value={bookingDate}
                       min = {d.toISOString().split('T')[0]}
                        onChange={e => { 
+                       //  timeSlotRef.current = true
                           setBookingDate(e.target.value) 
                        }} 
                       />
@@ -433,10 +438,10 @@ const [diffNo, setDiffNo] = useState(false)
                         return (
                            <Button outline key={id} className="m-1" size={isTabletOrMobile ? "sm" :""}   
                             style={isTabletOrMobile ? {fontSize:'11px', backgroundColor: (BookingTime && (BookingTime === time.timeSlot && timeColor)), color:  (BookingTime &&(BookingTime === time.timeSlot && 'white'))} : {backgroundColor:  (BookingTime &&(BookingTime === time.timeSlot && timeColor)), color:  (BookingTime &&(BookingTime === time.timeSlot && 'grey'))}}
-                               onClick ={() => { 
+                               onClick ={() => {  
                                 setBookingTime(time.timeSlot)
                                 setTimeColor('black')
-                              
+                                
                              }} 
                            >{time.timeSlot}</Button>
                           )

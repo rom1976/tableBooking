@@ -8,7 +8,7 @@ import dateFormat from "dateformat";
 import Countdown from 'react-countdown'; 
 import { Check } from "react-feather";
 import axios from "axios"; 
-import { handleBooking, handleLogin, handlePropertySelection, handleOutletSelection } from "../../../redux/tableBooking";
+import { handleBooking, handleLogin, handlePropertySelection, handleOutletSelection, getGuestTotalBooking, getGuestListHandler } from "../../../redux/tableBooking";
 import { handleModalTitle, sendOTP } from "../../../redux/modals";
 import { getOutletDetails, getOutletList, handleOutletList } from "../../../redux/launch";
   
@@ -47,6 +47,7 @@ const ModalsComponent = (props) => {
     const  [outletName, setOutletName] = useState('')
     const [imageUrl, setImageUrl] = useState('')
     const [outletList, setOutletList] = useState('')
+    const selectRestaRef = useRef(false)
     const customStyles = {
         content: {
           top: '40%',
@@ -92,13 +93,13 @@ const ModalsComponent = (props) => {
            if (launch.outletListData) {
              setOutletList(launch.outletListData)
 
-             if (!outletCode && launch.outletListData.outletList && launch.outletListData.outletList.length > 1) {
+             if (!outletCode && launch.outletListData.outletList && launch.outletListData.outletList.length > 1 && selectRestaRef.current) {
                 //  alert('greater length')      
                 setModalTitle('Select a Restaurant')
              }
            }
    
-        }, [launch.outletListData])
+        }, [launch.outletListData, outletCode])
 
         useEffect(() => { 
             const bkng = tableBooking.tableData
@@ -238,6 +239,7 @@ const ModalsComponent = (props) => {
                       //setModalTitle('Select a Restaurant')
                        setOutletCode('')
                        setOutletName('')
+                       selectRestaRef.current = true
                        dispatch(handlePropertySelection({propertyName:prop.propertyName, propertyId:prop.propertyId}))
                        // call here outletlist based on property selection
                        // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''}))
@@ -369,6 +371,7 @@ const ModalsComponent = (props) => {
       }
 
       const SaveModal = () => {
+     
         return ( 
            <Fragment>
             <Row>

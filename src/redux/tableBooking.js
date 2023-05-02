@@ -46,26 +46,46 @@ export const getGuestTotalBooking = createAsyncThunk('tableBooking/getGuestTotal
                 return res
         })
 
-export const getGuestListHandler = createAsyncThunk('tableBooking/getGuestListHandler', async (obj) => {
-  const res =   axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTableBookingList`, {
-    params:{
-      CurrentPageNumber:1,
-      NoOfRowsPerPage:10,
-      ContactNo:obj.ContactNo
-    },
-    headers: { Authorization: `Bearer ${obj.outletList.token || obj.token}`},
-     "Content-Type": "application/json"
-    }
- ).then((response) => { 
- //setOTPRefernceData(response.data.response)
- console.log(response.data.response)
-//  setOtpReferenceId(response.data.response.otpReferenceId)
-//  setOtpExpiryDuration(Number(response.data.response.otpExpiryDuration * 60000))
-    return response.data.response
-})   
-    
-return res 
-})
+      export const getGuestListHandler = createAsyncThunk('tableBooking/getGuestListHandler', async (obj) => {
+        const res =   axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTableBookingList`, {
+          params:{
+            CurrentPageNumber:1,
+            NoOfRowsPerPage:10,
+            ContactNo:obj.ContactNo
+          },
+          headers: { Authorization: `Bearer ${obj.outletList.token || obj.token}`},
+           "Content-Type": "application/json"
+          }
+       ).then((response) => { 
+       //setOTPRefernceData(response.data.response)
+       console.log(response.data.response)
+      //  setOtpReferenceId(response.data.response.otpReferenceId)
+      //  setOtpExpiryDuration(Number(response.data.response.otpExpiryDuration * 60000))
+          return response.data.response
+      })   
+          
+      return res 
+      })
+
+   //    export const getTimeSlotListHandler = createAsyncThunk('tableBooking/getTimeSlotListHandler', async (obj) => {
+   //      const res =  axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
+   //        params:{
+   //          outletCode:obj.outletCode,
+   //          BookingDate:obj.bookingDate
+   //        },
+   //        headers: { Authorization: `Bearer ${obj.token}`},
+   //          "Content-Type": "application/json"
+   //        }
+   //        ).then((response) => { 
+   //     
+   //     console.log(response.data.response)
+   //   
+   //        return response.data.response
+   //    })   
+   //        
+   //    return res 
+   //    })
+ 
   
   export const tableSlice = createSlice({
     name: 'tableBooking',
@@ -76,6 +96,7 @@ return res
       guestTotalBooking:'',
       selectedProperty:initialProperty(),
       selectedOutlet:initialOutlet(),
+      timeSlotList:'',
       isOpenBL:false
     },
     reducers: {
@@ -121,6 +142,10 @@ return res
          // sessionStorage.setItem('guestList', JSON.stringify(action.payload))  
           // state.bookmarks = action.payload.bookmarks
         })
+       // .addCase(getTimeSlotListHandler.fulfilled, (state, action) => {
+       //   state.timeSlotList = action.payload
+       //   console.log(action.payload)   
+       //  })
       }
    })
 

@@ -34,12 +34,15 @@ const [propertyCount, setPropertyCount] = useState(0)
 const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outletDetails)
 //const [modalTitle, setModalTitle] = useState() used Redux to pass modal Title
  const outletListRef = useRef(true)
- const outletDetailsRef = useRef(true)
+ const outletDetailsRef = useRef(false)
   
 
       useEffect(() => { 
            
-           if (launchData.outletDetails) setOutletDetails(launchData.outletDetails.outletDetails)
+           if (launchData.outletDetails.outletDetails) {
+              setOutletDetails(launchData.outletDetails.outletDetails) 
+              if (launchData.outletDetails.outletDetails.length > 0) outletDetailsRef.current = false
+            }
          //  if (launchData.paramData) { 
              // closeModalLink() 
            //  if (launchData.paramData.propertyName !== 'NONE' && propertyName !== "" && propertyName !== "NONE") {
@@ -78,21 +81,40 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                  console.log(sel.propertyId)
                  setPropertyName(sel.propertyName)
                  setPropertyId(sel.propertyId)
+              //  if (!launchData.outletListData.outletList) outletListRef.current = true // updated while coming back from view page , call outletlist post property update
+                 // isopenBL can be true while visiting back from view
                  }
 
-                             //  tableBooking.selectedOutlet === '' for reset while selecting new property
-               if (tableBooking.selectedOutlet.outletCode !== 'NONE' || tableBooking.selectedOutlet.outletCode === '') {
-                       //  alert('Jiii')
+                    //  tableBooking.selectedOutlet === '' for reset while selecting new property
+               if (tableBooking.selectedOutlet.outletCode !== 'NONE') {
+                   
                        const sel = tableBooking.selectedOutlet
-                       console.log(sel)  
+                           // once outleCode is updated enable outletdetails ref 
+
                       if(sel.outletCode && sel.outletCode !== "NONE" || outletCode === '') {
                         setOutletCode(sel.outletCode) 
                         setOutletName(sel.outletName)
                         setImageUrl(sel.imageUrl) 
+                        if (sel.outletCode !== outletCode) {
+                          if (tableBooking.selectedOutlet.outletCode && tableBooking.selectedOutlet.outletCode !== 'NONE' && launchData.outletListData.token && outletDetailsRef.current) {
+                             
+                                      outletDetailsRef.current = false   
+                                      dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
+                              
+                          }
+                          console.log(outletDetailsRef.current, outletCode, sel.outletCode)
+
+                        } 
+                        if(sel.outletCode && sel.outletCode !== "NONE" && outletCode === '') { 
+                          dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
+                        }
+                        if (sel.outletCode === outletCode && launchData.outletDetails.outletDetails.length === 0) {
+                          outletDetailsRef.current = false
+                        }
                       } 
                 } 
 
-               console.log(outletCode)
+               console.log(tableBooking)
             
                // if (!tableBooking.selectedOutlet.outletCode) {
                
@@ -105,24 +127,35 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
   
          useEffect(() => {
                  // for updating outlet details post outlet selection
-                 if (tableBooking.selectedOutlet.outletCode && tableBooking.selectedOutlet.outletCode !== 'NONE' && launchData.outletListData.token && outletDetailsRef.current) {
-                  dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
-                  outletDetailsRef.current = false  
-                }
-        
+               //  if (tableBooking.selectedOutlet.outletCode && tableBooking.selectedOutlet.outletCode !== 'NONE' && launchData.outletListData.token && outletDetailsRef.current) {
+               //   outletDetailsRef.current = false   
+               //   dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
+               //  
+               // }
+                   return () =>  outletDetailsRef.current = false   
          }, [tableBooking.selectedOutlet.outletCode,launchData.outletListData.token])
+
+         useEffect(() => {
+          if (tableBooking.isOpenBL) {
+              outletListRef.current = true
+        
+          }
+
+     },[tableBooking.isOpenBL])
 
            useEffect(() => {   
                             if (property.propertyData.propertyList) {  
+                                 console.log(tableBooking.selectedProperty.propertyId, launchData.token, outletListRef.current)
+
                                   const pr = property.propertyData.propertyList
                                   setPropertyCount(pr.length)  
                                   dispatch(handleOutletList(''))
                                  // dispatch(handleOutletSelection({})) 
                               // whenever page refresh happening outlet was not called, since outletcodes cane be similar, propertyId change can be used
                                if (tableBooking.selectedProperty.propertyId && launchData.token && outletListRef.current) {
-                                   alert()
+                               
                                    dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token:launchData.token})) 
-                                 
+                                   outletListRef.current = false
                                    console.log(tableBooking.selectedProperty.propertyId)
                                 } else if (!tableBooking.selectedProperty.propertyId) {
                                           if ((launchData.paramData.outletCode === 'NONE' || !launchData.paramData.outletCode || !outletCode || outletCode === 'NONE') && launchData.token) {
@@ -153,10 +186,10 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                       
                                        }
                                  }
-                                 outletListRef.current = false    
+                                
                           }
               
-                },[property.propertyData.propertyList, token, tableBooking.selectedProperty.propertyId])
+                },[property.propertyData.propertyList, launchData.token, tableBooking.selectedProperty.propertyId])
 
           //     useEffect(() => {
           //      if ((!propertyId || propertyId === "NONE") && (propertyList && propertyList.propertyList.length === 1))  { 
@@ -187,8 +220,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
             //   if (propertyList)  setPropertyCount(propertyList.propertyList.length)
   //    }, [propertyList])
   
-       useEffect(() => {  
-               
+       useEffect(() => {   
                         if (launchData.outletListData.outletList) {  
                              console.log(launchData.outletListData.outletList)  
                                  setOutletCount(launchData.outletListData.outletList.length) 
@@ -204,19 +236,22 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                      setOutletName('')
                                       setOutletCode('') 
                                         dispatch(handleOutletSelection({outletName:outl.outletName, outletCode:outl.outletCode, imageUrl:outl.imageUrl}   ))
-                                        outletDetailsRef.current = true 
-                                        // call outletdetails even if outletcode of different properties are same
-                                        // dispatch(getOutletDetails({outletCode:outl.outletCode, tokenOption:launchData.outletListData.token}))
-                                      //sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:PropertyId, propertyName:propertyName, outletCode:outletcode, outletName:outletName, imageUrl:imgurl})) 
+                                        dispatch(getOutletDetails({outletCode:outl.outletCode, tokenOption:launchData.outletListData.token}))
+                                       // outletDetailsRef.current = true 
+                                        
                                  }  else if (launchData.outletListData.outletList.length > 1) { 
-                                           if (modalsData.modalTitle === 'Select a Location') {  
+                                             if (modalsData.modalTitle === 'Select a Location') {  
                                             setImageUrl('')
                                             setOutletName('')
                                              setOutletCode('')
                                             dispatch(handleOutletSelection({}))
+                                         
                                               dispatch(handleModalTitle('Select a Restaurant'))  
-                                           } else if (outletCode === 'NONE' || !outletCode ||  tableBooking.selectedOutlet.outletCode === '' || outletCode === '') { 
+                                              // if (outletCode === 'NONE' || !outletCode ||  tableBooking.selectedOutlet.outletCode === '' || outletCode === '') 
+                                           } else if (launchData.paramData.outletCode === 'NONE' || !launchData.paramData.outletCode ||  tableBooking.selectedOutlet.outletCode === '' || outletCode === '') { 
+                                            
                                             dispatch(handleModalTitle('Select a Restaurant'))  
+                                          
                                          } else {
                                             const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode === outletCode)
                                           
@@ -280,8 +315,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
               <span className="ps-2"  
               >{outletName}
               { outletCount > 1 &&
-               <span onClick={ ()=> {
-                
+               <span onClick={ ()=> { 
                 dispatch(getOutletList({propertyId, token})) 
                 dispatch(handleModalTitle('Select a Restaurant'))
                  //setModalOutlet(!modalOutlet) 

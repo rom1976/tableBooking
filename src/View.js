@@ -47,11 +47,13 @@ const View = (props) => {
  }, [props.checkInId])
  
   const viewTableBooking = () => {
-       setView('table')
-      // dispatch(handleViewPage('')) 
-       props.tableBookingHandler()
-       dispatch(handleIsOpenBL(true)) 
-    
+      // setView('table') 
+       // setTimeout(() => dispatch(handleViewPage(''), 1000))
+  //     dispatch(handleViewPage('')) 
+      // props.tableBookingHandler()
+      
+      dispatch(handlePageId(1))
+       dispatch(handleIsOpenBL(true))  
     } 
 
    const walkingBookingStatusHandler = () => {
