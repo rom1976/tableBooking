@@ -8,7 +8,7 @@ import { Button, Card, CardBody, CardFooter, CardHeader, Col, Form, FormGroup, I
 //custome hooks
 // import useLaunch from "../../core/utils/useLaunch"
  
-import { getOutletList, handlePageId, handleViewPage } from "../../redux/launch";
+import { getOutletDetails, getOutletList, handlePageId, handleViewPage } from "../../redux/launch";
 // import useWalkin from "../../Hooks/useWalkin";
  import View from "../../View";
  import Loading from "../Loading";
@@ -73,9 +73,7 @@ const CheckIn = (props) => {
               }
            }, [propertyData.propertyData, propertyId])
 
-           useEffect(() => {
-               
-            
+           useEffect(() => { 
                  if (launch.outletListData.outletList){
                     launch.outletListData.outletList.forEach(item => {
                       
@@ -142,8 +140,11 @@ const CheckIn = (props) => {
             
               const paramData = launch.paramData 
                 setPropertyId(paramData.propertyId)  
-                setOutletCode(paramData.outletCode)      
-       }, [launch.paramData])
+                setOutletCode(paramData.outletCode)  
+                if (launch.token && paramData.outletCode) {
+                  dispatch(getOutletDetails({tokenOption:launch.token, outletCode:paramData.outletCode}))    
+                }   
+       }, [launch.paramData, launch.token])
      
           useEffect(() => {
            const favicon = document.getElementById("favicon");

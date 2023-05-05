@@ -44,9 +44,8 @@ const BookingDetailsList = (props) => {
                  // setInstruction(bkng.Instruction)
                  if (tableBooking.loggedIn === false) {
                     setGuestTableBookingList('') 
-                    setIsOpenBL(false) 
-                     
-                 }     
+                    setIsOpenBL(false)   
+                   }     
       }, [tableBooking])
 
    
@@ -77,9 +76,9 @@ const BookingDetailsList = (props) => {
            useEffect(() => {
               if (launch.outletListData) {
                 setToken(launch.outletListData.token)
-              }
+               }
                console.log(launch.outletListData)
-       }, [launch.outletListData])
+             }, [launch.outletListData])
 
              const tableBookingHandler = () => {
                  dispatch(handleViewPage(''))
@@ -88,9 +87,11 @@ const BookingDetailsList = (props) => {
                  
               //   guestRef.current = true
                }   
-               useEffect(() => { 
-                  guestRef.current = true
-               }, [currentPage]) 
+               useEffect(() => {    
+                   if (isOpenBL) {
+                     guestRef.current = true  
+                   }
+               }, [currentPage, isOpenBL]) 
 
            const getGuestListHandler = () => {
                      
@@ -106,25 +107,25 @@ const BookingDetailsList = (props) => {
                     setTotalBooking(res.data.response.totalBooking) 
                   })
                   //GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetGuestTableBookingList?CurrentPageNumber=10&NoOfRowsPerPage=1&ContactNo=9738854149'
-                  axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTableBookingList`, {
-                   params:{
-                     CurrentPageNumber:currentPage,
-                     NoOfRowsPerPage:10,
-                     ContactNo:ContactNo
-                   },
-                   headers: { Authorization: `Bearer ${token || props.token}`},
-                    "Content-Type": "application/json"
-                   }
-                ).then((res) =>{ 
-                  setGuestTableBookingList(res.data.response)
-                  window.scrollTo(0, document.body.scrollHeight);
-                  guestRef.current = false
-                })
+                    axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTableBookingList`, {
+                     params:{
+                       CurrentPageNumber:currentPage,
+                       NoOfRowsPerPage:10,
+                       ContactNo:ContactNo
+                     },
+                     headers: { Authorization: `Bearer ${token || props.token}`},
+                      "Content-Type": "application/json"
+                     }
+                  ).then((res) =>{ 
+                   setGuestTableBookingList(res.data.response)
+                   window.scrollTo(0, document.body.scrollHeight);
+                   guestRef.current = false
+                  })
                 }
 
                 useEffect(() => {
                   if (tableBooking.isOpenBL) {
-                 !isOpenBL && setIsOpenBL(tableBooking.isOpenBL)
+                   !isOpenBL && setIsOpenBL(tableBooking.isOpenBL)
                  //  getGuestListHandler()
                   }
 
@@ -132,14 +133,13 @@ const BookingDetailsList = (props) => {
  
           useEffect(() => { 
                if(isOpenBL && tableBooking.loggedIn && ContactNo && guestRef.current) {
-                    guestRef.current = false 
+                   guestRef.current = false 
                    console.log(GuestTableBookingList)
                    getGuestListHandler()
-                   document.body.style.overflow = "visible"  
-                 
+                   document.body.style.overflow = "visible"   
                  } 
                
-                console.log(isOpenBL, tableBooking.loggedIn, ContactNo)
+                 console.log(isOpenBL, tableBooking.loggedIn, ContactNo)
             }, [isOpenBL, tableBooking.loggedIn, currentPage, props.outletList, props.token, ContactNo])
 
             const cancelHandler = (outcode, propertyId, bookingId) => {

@@ -13,7 +13,7 @@ import Loading from './Loading';
 import ErrorModal from './view/TableBooking/Modals/ErrorModal';
 import BookingView from './view/TableBooking/BookingView';
 import TableBookingComp from './view/TableBooking/TableBookingComp';
-import { handlePageId, handleViewPage } from './redux/launch';
+import { getOutletDetails, handlePageId, handleViewPage } from './redux/launch';
 import { handleIsOpenBL } from './redux/tableBooking';
 
 const View = (props) => {
@@ -30,13 +30,18 @@ const View = (props) => {
  
   const [errorMessage, setErrorMessage] = useState('')
   const walkinRef = useRef(true)
+  const outletDetailsRef = useRef(true)
   useEffect(() => {
        if (launch.paramData) {
             setToken(launch.token)
             setParamData(launch.paramData) 
+            if (launch.token && launch.paramData.outletCode && outletDetailsRef.current && launch.paramData.remarks) {
+              outletDetailsRef.current = false
+              dispatch(getOutletDetails({tokenOption:launch.token, outletCode:launch.paramData.outletCode}))    
+            }
           }
           
-  }, [launch])
+  }, [launch.token, launch.paramData.outletCode])
 
   useEffect(() => {
      if (props.BookingId) setBookingId(props.BookingId)

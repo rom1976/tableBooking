@@ -64,7 +64,7 @@ const Launching = () => {
 
        useEffect(() => { 
           if (token && launchData.paramData.outletCode !== "NONE" && launchData.paramData.outletCode !== '' && !refOtDetails.current) {
-                dispatch(getOutletDetails({tokenOption:token, outletCode:launchData.paramData.outletCode}))
+             //   dispatch(getOutletDetails({tokenOption:token, outletCode:launchData.paramData.outletCode}))
                 refOtDetails.current = true
             } else {
               console.log('No outlet Code')

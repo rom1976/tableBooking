@@ -75,15 +75,12 @@ const [diffNo, setDiffNo] = useState(false)
            useEffect(() => {
             const sel = tableBooking.selectedOutlet
              // setBookingDate(d.toISOString().split('T')[0]) 
-                  if (sel.outletCode) { 
-                        if (!timeSlotList) {
-                          timeSlotRef.current = true 
-                        }
-
-                      setOutletName(sel.outletName) 
+                  if (sel.outletCode) {     
+                          timeSlotRef.current = true  
+                          setOutletName(sel.outletName) 
                     //   if (sel.outletCode !== outletCode)  {
                            setOutletCode(sel.outletCode)   
-                          console.log('different outlet or not ',  timeSlotRef.current, sel.outletCode === outletCode)
+                        //  console.log('different outlet or not ',  timeSlotRef.current, sel.outletCode === outletCode)
                        //  } 
                  }   
            }, [tableBooking.selectedOutlet.outletCode])
@@ -179,9 +176,41 @@ const [diffNo, setDiffNo] = useState(false)
            if (BookingTime && FirstName && ContactNo && tableBooking.loggedIn && saveToggle) setBookingHandlerToggle(true)
  
          },[tableBooking.loggedIn])
+
+            const timeSlotListHandler = () => {
+              axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
+                params:{
+                  outletCode:tableBooking.selectedOutlet.outletCode || launch.paramData.outletCode,
+                  BookingDate:bookingDate
+                },
+                headers: { Authorization: `Bearer ${launch.outletListData.token}`},
+                  "Content-Type": "application/json"
+                }
+                ).then((response) => {   
+                  
+                if (response.data.errorCode === 1) {
+                  dispatch(handleModalTitle(response.data.message))
+                } 
+                setTimeSlotList(response.data.response)
+               
+                }).catch(error => console.log(error)) 
+
+                timeSlotRef.current = false 
+            }
+
+         useEffect(() => {
+          
+           if (tableBooking.isOpenBL && launch.outletListData.token && timeSlotRef.current) {
+                 timeSlotRef.current = false 
+              // caling time, back from view page 
+                setTimeout(() =>  timeSlotListHandler(), 1000)   
+               
+                }
+              
+         },[tableBooking.isOpenBL, launch.outletListData.token])
  
            useEffect(() => {
-             console.log(tableBooking.loggedIn, bookingHandlerToggle, BookingTime, bookingDate, BookingTime, launch.outletListData.token)
+           //  console.log(tableBooking.loggedIn, bookingHandlerToggle, BookingTime, bookingDate, BookingTime, launch.outletListData.token)
 
             if ((tableBooking.loggedIn && bookingHandlerToggle && BookingTime && bookingDate && BookingTime && launch.outletListData.token)){
               axios.post(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}ValidateTableBooking`, 
@@ -252,30 +281,13 @@ const [diffNo, setDiffNo] = useState(false)
         }, [tableBooking.loggedIn, bookingHandlerToggle, launch.outletListData.token]) 
   
         useEffect(() => {
-            const tokenOption = launch.outletListData.token
+          //  const tokenOption = launch.outletListData.token
           //  if (tokenOption && tableBooking.selectedOutlet.outletCode && bookingDate ) timeSlotRef.current = true
 
-              console.log(tokenOption, tableBooking.selectedOutlet.outletCode, bookingDate, timeSlotRef.current)
+              console.log(launch.outletListData.token, tableBooking.selectedOutlet.outletCode, bookingDate, timeSlotRef.current)
             // GET 'https://dev.lucidits.com/LUCIDPOSGuestTableReservationAPI/V1/GetTimeSlotList?OutletCode=TERC&BookingDate=04-Aug-2022'
-            if (tokenOption && tableBooking.selectedOutlet.outletCode && bookingDate && timeSlotRef.current) { 
-                   timeSlotRef.current = false 
-                  axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetTimeSlotList`, {
-                  params:{
-                    outletCode:tableBooking.selectedOutlet.outletCode,
-                    BookingDate:bookingDate
-                  },
-                  headers: { Authorization: `Bearer ${tokenOption}`},
-                    "Content-Type": "application/json"
-                  }
-                  ).then((response) => {   
-                    
-                  if (response.data.errorCode === 1) {
-                    dispatch(handleModalTitle(response.data.message))
-                  } 
-                  setTimeSlotList(response.data.response)
-                
-                 
-                  }).catch(error => console.log(error)) 
+              if (launch.outletListData.token && tableBooking.selectedOutlet.outletCode && bookingDate && timeSlotRef.current && !tableBooking.isOpenBL) {  
+                   timeSlotListHandler()
                  
                 }
                  if (launch.outletListData.errorCode === 1) {
@@ -405,8 +417,8 @@ const [diffNo, setDiffNo] = useState(false)
                       style={isTabletOrMobile ? {fontSize:'11px', width:'100%', height:'30px'} : {width:'185px'}}
                       value={bookingDate}
                       min = {d.toISOString().split('T')[0]}
-                       onChange={e => { 
-                       //  timeSlotRef.current = true
+                       onChange={e => {  
+                        timeSlotRef.current = true
                           setBookingDate(e.target.value) 
                        }} 
                       />

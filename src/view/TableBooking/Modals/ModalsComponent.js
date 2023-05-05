@@ -74,8 +74,12 @@ const ModalsComponent = (props) => {
         }
     
         function closeModalLink() {  
-                    setIsOpenLink(false) 
-                    dispatch(handleModalTitle('')) 
+
+              if (modalTitle !== 'Select a Restaurant' && tableBooking.selectedProperty.outletCode !== '') { 
+                setIsOpenLink(false) 
+                dispatch(handleModalTitle('')) 
+              }
+                    
                 //    setModalTitle('')  
                 //  this has issues with multiple clicks and closing modal 
                //    if (modalTitle !== 'Select a Location') {
@@ -162,8 +166,8 @@ const ModalsComponent = (props) => {
            if ((!loggedIn && (ContactNo || contactNoRef.current))) dispatch(sendOTP({ContactNo, contactNoRef: contactNoRef.current, token: launch.outletListData.token})) 
          }
  
-    const contactHandler = (no) => {       
-        //  if (ContactNo.length !== 10) {    
+        const contactHandler = (no) => {       
+           //  if (ContactNo.length !== 10) {    
           if (no.length !== 10 ) {
             // && ContactNo.length !== 10 removed 
            setModalErrorMessage('Kindly Enter Valid Mobile No') 
@@ -184,7 +188,7 @@ const ModalsComponent = (props) => {
                 }    
                       }
               
-       } 
+           } 
   
           useEffect(() => {
        
@@ -240,12 +244,14 @@ const ModalsComponent = (props) => {
                        setOutletCode('')
                        setOutletName('')
                        selectRestaRef.current = true
+                       dispatch(handleOutletList(''))
+                       dispatch(handleOutletSelection({}))
                        dispatch(handlePropertySelection({propertyName:prop.propertyName, propertyId:prop.propertyId}))
                        // call here outletlist based on property selection
                        // dispatch(handleOutletSelection({outletName:'', outletCode:'', imageUrl:''}))
 
-                         dispatch(handleOutletList(''))
-                         dispatch(handleOutletSelection({}))
+                       //  dispatch(handleOutletList(''))
+                        
                          dispatch(getOutletList({propertyId:prop.propertyId, token:launch.token}))
                        }
                       }

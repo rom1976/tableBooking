@@ -26,7 +26,7 @@ const [token, setToken] = useState(launchData.token)
 const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1224px)' }) 
 const [propertyId, setPropertyId] = useState(launchData.paramData.propertyId)
 const [propertyName, setPropertyName] = useState('') //searchParams.get("propname") wrong prop name from jay's api
-const [outletCode, setOutletCode] = useState(launchData.paramData.outletCode)
+const [outletCode, setOutletCode] = useState('')
 const [outletName, setOutletName] =  useState('')
 const [imageUrl, setImageUrl] = useState('')
 const [outletCount, setOutletCount] = useState(0)
@@ -43,23 +43,22 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
               setOutletDetails(launchData.outletDetails.outletDetails) 
               if (launchData.outletDetails.outletDetails.length > 0) outletDetailsRef.current = false
             }
-         //  if (launchData.paramData) { 
-             // closeModalLink() 
-           //  if (launchData.paramData.propertyName !== 'NONE' && propertyName !== "" && propertyName !== "NONE") {
-           //   setPropertyName(launchData.paramData.propertyName)
-           //  
-           //  }
-           // if (launchData.paramData.propertyId !== 'NONE' && propertyId !== "" && propertyId !== "NONE") {
-           //  
-           //  setPropertyId( launchData.paramData.propertyId)
-           // }
-         //    if (launchData.paramData.outletName !== 'NONE' && outletName !== "" && outletName !== "NONE") {
-         //     setOutletName(launchData.paramData.outletName)
-         //     
-         //    }
-           
-
-        //    }  
+              //  if (launchData.paramData) { 
+                // closeModalLink() 
+              //  if (launchData.paramData.propertyName !== 'NONE' && propertyName !== "" && propertyName !== "NONE") {
+              //   setPropertyName(launchData.paramData.propertyName)
+              //  
+              //  }
+              // if (launchData.paramData.propertyId !== 'NONE' && propertyId !== "" && propertyId !== "NONE") {
+              //  
+              //  setPropertyId( launchData.paramData.propertyId)
+              // }
+              //    if (launchData.paramData.outletName !== 'NONE' && outletName !== "" && outletName !== "NONE") {
+              //     setOutletName(launchData.paramData.outletName)
+              //     
+              //    }  
+   
+              //    }  
            if (launchData.token) {
             setToken(launchData.token)
            } 
@@ -67,11 +66,16 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
         }, [launchData.outletDetails, launchData.token, launchData.outletData])
 
         useEffect(() => {
-          if (launchData.paramData.outletCode !== 'NONE' && (outletCode === "" || outletCode === "NONE" || !outletCode)) { 
-            setOutletCode(launchData.paramData.outletcode)  
-          }
-           console.log(launchData.paramData.outletcode, outletCode)
-        }, [launchData.paramData.outletCode])
+          if (launchData.paramData.outletCode !== 'NONE' && launchData.outletListData.outletList) { 
+              setOutletCode(launchData.paramData.outletCode)   
+              console.log(launchData.outletListData.outletList, launchData.paramData.outletCode )
+             if (launchData.outletListData.outletList.length > 0 && !outletCode && !tableBooking.selectedOutlet.outletCode) { // outleCode is mentioned to avoid running it when reset tablebooking 
+                    const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode === launchData.paramData.outletCode)
+                                              //  alert(tableBooking.selectedOutlet.outletName)
+                    dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
+               } 
+             }
+          }, [launchData.paramData.outletCode, launchData.outletListData.outletList, modalsData.modalTitle])
 
      useEffect(() => {
            if (tableBooking) setLoggedIn(tableBooking.loggedIn)
@@ -81,32 +85,33 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                  console.log(sel.propertyId)
                  setPropertyName(sel.propertyName)
                  setPropertyId(sel.propertyId)
+               
               //  if (!launchData.outletListData.outletList) outletListRef.current = true // updated while coming back from view page , call outletlist post property update
                  // isopenBL can be true while visiting back from view
                  }
 
                     //  tableBooking.selectedOutlet === '' for reset while selecting new property
-               if (tableBooking.selectedOutlet.outletCode !== 'NONE') {
-                   
-                       const sel = tableBooking.selectedOutlet
-                           // once outleCode is updated enable outletdetails ref 
-
-                      if(sel.outletCode && sel.outletCode !== "NONE" || outletCode === '') {
-                        setOutletCode(sel.outletCode) 
-                        setOutletName(sel.outletName)
-                        setImageUrl(sel.imageUrl) 
-                        if (sel.outletCode !== outletCode) {
-                          if (tableBooking.selectedOutlet.outletCode && tableBooking.selectedOutlet.outletCode !== 'NONE' && launchData.outletListData.token && outletDetailsRef.current) {
-                             
-                                      outletDetailsRef.current = false   
-                                      dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
-                              
-                          }
-                          console.log(outletDetailsRef.current, outletCode, sel.outletCode)
-
-                        } 
-                        if(sel.outletCode && sel.outletCode !== "NONE" && outletCode === '') { 
+               if (tableBooking.selectedOutlet.outletCode !== 'NONE') { 
+                        const sel = tableBooking.selectedOutlet
+                           // once outleCode is updated enable outletdetails ref  
+                      if (sel.outletCode !== "NONE" || outletCode === '') {
+                          // setOutletCode(sel.outletCode) 
+                           setOutletName(sel.outletName)
+                           setImageUrl(sel.imageUrl) 
+                       // if (sel.outletCode !== outletCode) {
+                       //   if (tableBooking.selectedOutlet.outletCode && tableBooking.selectedOutlet.outletCode !== 'NONE' && launchData.outletListData.token && outletDetailsRef.current) {
+                       //                
+                       //               outletDetailsRef.current = false   
+                       //               dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
+                       //       
+                       //   }
+                       //   console.log(outletDetailsRef.current, outletCode, sel.outletCode)
+//
+                       // } 
+                        if(sel.outletCode && sel.outletCode !== "NONE" && outletCode === '' && outletDetailsRef.current && launchData.outletListData.token) { 
+                          outletDetailsRef.current = false
                           dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
+                       
                         }
                         if (sel.outletCode === outletCode && launchData.outletDetails.outletDetails.length === 0) {
                           outletDetailsRef.current = false
@@ -132,37 +137,43 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                //   dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
                //  
                // }
-                   return () =>  outletDetailsRef.current = false   
+               //    return () =>  outletDetailsRef.current = false   
          }, [tableBooking.selectedOutlet.outletCode,launchData.outletListData.token])
 
          useEffect(() => {
-          if (tableBooking.isOpenBL) {
-              outletListRef.current = true
-        
-          }
-
-     },[tableBooking.isOpenBL])
+          if (tableBooking.isOpenBL && !outletListRef.current) { 
+             // outletListRef.current = true  , getOutletList only while coming back from view
+             dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token:launchData.token})) 
+             outletDetailsRef.current = true
+           } 
+          },[tableBooking.isOpenBL])
 
            useEffect(() => {   
                             if (property.propertyData.propertyList) {  
-                                 console.log(tableBooking.selectedProperty.propertyId, launchData.token, outletListRef.current)
-
+                            
+                                 console.log(tableBooking.selectedProperty.propertyId, launchData.token, outletListRef.current) 
                                   const pr = property.propertyData.propertyList
                                   setPropertyCount(pr.length)  
-                                  dispatch(handleOutletList(''))
+                                //  dispatch(handleOutletList(''))
                                  // dispatch(handleOutletSelection({})) 
                               // whenever page refresh happening outlet was not called, since outletcodes cane be similar, propertyId change can be used
-                               if (tableBooking.selectedProperty.propertyId && launchData.token && outletListRef.current) {
-                               
-                                   dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token:launchData.token})) 
-                                   outletListRef.current = false
-                                   console.log(tableBooking.selectedProperty.propertyId)
-                                } else if (!tableBooking.selectedProperty.propertyId) {
+                                if (tableBooking.selectedProperty.propertyId && launchData.token && outletListRef.current) {
+                                     outletListRef.current = false    
+                                  
+                                   if(!tableBooking.isOpenBL) {
+                                  //  alert(tableBooking.isOpenBL)
+                                     dispatch(getOutletList({propertyId:tableBooking.selectedProperty.propertyId, token:launchData.token})) 
+                                     outletDetailsRef.current = true
+                                    }
+                                       
+                                  } else if (!tableBooking.selectedProperty.propertyId) {
+                                  
                                           if ((launchData.paramData.outletCode === 'NONE' || !launchData.paramData.outletCode || !outletCode || outletCode === 'NONE') && launchData.token) {
                 
                                            if (launchData.paramData.propertyId && tableBooking.selectedProperty.propertyId === '') {
                                                 dispatch(getOutletList({propertyId:launchData.paramData.propertyId, token:launchData.token})) 
                                                 outletListRef.current = false
+                                                outletDetailsRef.current = true
                                               }}
                                            if (property.propertyData.propertyList.length === 1 && token && outletListRef.current) { 
                                                const [propertyObj] =  property.propertyData.propertyList 
@@ -171,16 +182,20 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                                 if (token) {
                                                      dispatch(getOutletList({propertyId:propertyObj.propertyId, token})) 
                                                      outletListRef.current = false
+                                                     outletDetailsRef.current = true
                                                    }  
                                             } else if (property.propertyData.propertyList.length > 1) {
                                           if (!propertyId || propertyId === 'NONE') {
                                                dispatch(handleModalTitle('Select a Location'))
+                                               outletDetailsRef.current = true
                                              } else {
                                                const [propertyObj] =  property.propertyData.propertyList.filter(item => item.propertyId === propertyId) 
                                                 dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
                                                   if (token) {
                                                        dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
                                                          outletListRef.current = false
+                                                         outletDetailsRef.current = true
+
                                                 }
                                            }
                                       
@@ -188,7 +203,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                  }
                                 
                           }
-              
+ 
                 },[property.propertyData.propertyList, launchData.token, tableBooking.selectedProperty.propertyId])
 
           //     useEffect(() => {
@@ -220,49 +235,57 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
             //   if (propertyList)  setPropertyCount(propertyList.propertyList.length)
   //    }, [propertyList])
   
-       useEffect(() => {   
+       useEffect(() => {   console.log(modalsData)
                         if (launchData.outletListData.outletList) {  
                              console.log(launchData.outletListData.outletList)  
                                  setOutletCount(launchData.outletListData.outletList.length) 
                                  
-                                 if(!tableBooking.selectedOutlet.outletCode || tableBooking.selectedOutlet.outletCode === '')  {  
+                                 if(!tableBooking.selectedOutlet.outletCode || tableBooking.selectedOutlet.outletCode === '' || tableBooking.selectedOutlet.outletCode === 'NONE')  {  
                                     console.log(launchData.outletListData.outletList.length) 
-                              
-                                 if (launchData.outletListData.outletList.length === 1 ) {  
                                      
-                                     const [outl] = launchData.outletListData.outletList 
-                                     dispatch(handleModalTitle(''))  
-                                      setImageUrl('')
-                                     setOutletName('')
-                                      setOutletCode('') 
-                                        dispatch(handleOutletSelection({outletName:outl.outletName, outletCode:outl.outletCode, imageUrl:outl.imageUrl}   ))
-                                        dispatch(getOutletDetails({outletCode:outl.outletCode, tokenOption:launchData.outletListData.token}))
-                                       // outletDetailsRef.current = true 
-                                        
-                                 }  else if (launchData.outletListData.outletList.length > 1) { 
-                                             if (modalsData.modalTitle === 'Select a Location') {  
+                                      if (launchData.outletListData.outletList.length === 1 ) {   
+                                           const [outl] = launchData.outletListData.outletList 
+                                           dispatch(handleModalTitle(''))  
                                             setImageUrl('')
-                                            setOutletName('')
-                                             setOutletCode('')
-                                            dispatch(handleOutletSelection({}))
-                                         
-                                              dispatch(handleModalTitle('Select a Restaurant'))  
-                                              // if (outletCode === 'NONE' || !outletCode ||  tableBooking.selectedOutlet.outletCode === '' || outletCode === '') 
-                                           } else if (launchData.paramData.outletCode === 'NONE' || !launchData.paramData.outletCode ||  tableBooking.selectedOutlet.outletCode === '' || outletCode === '') { 
-                                            
-                                            dispatch(handleModalTitle('Select a Restaurant'))  
+                                           setOutletName('')
+                                          //  setOutletCode('') 
+                                              dispatch(handleOutletSelection({outletName:outl.outletName, outletCode:outl.outletCode, imageUrl:outl.imageUrl}   ))
+                                              dispatch(getOutletDetails({outletCode:outl.outletCode, tokenOption:launchData.outletListData.token}))
+                                             // outletDetailsRef.current = true 
+                                        
+                                       }  else if (launchData.outletListData.outletList.length > 1) { 
+                                              
+                                             if (modalsData.modalTitle === 'Select a Location') {  
+                                                  setImageUrl('')
+                                                  setOutletName('')
+                                                  // setOutletCode('')
+                                                  dispatch(handleOutletSelection({})) 
+                                                     dispatch(handleModalTitle('Select a Restaurant'))  
+                                                // if (outletCode === 'NONE' || !outletCode ||  tableBooking.selectedOutlet.outletCode === '' || outletCode === '') 
+                                              }
+                                              //else if (launchData.paramData.outletCode === 'NONE' || !launchData.paramData.outletCode ||  tableBooking.selectedOutlet.outletCode === '' || outletCode === '') { 
+                                            //
+                                            //         dispatch(handleModalTitle('Select a Restaurant'))  
                                           
-                                         } else {
-                                            const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode === outletCode)
-                                          
-                                           dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
-                                          }
+                                            //   } else if (launchData.paramData.outletCode && modalsData.modalTitle !== 'Select a Restaurant') {
+                                            //    const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode ===  launchData.paramData.outletCode)
+                                            //     alert(tableBooking.selectedOutlet.outletName)
+                                            //    dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
+                                            //   }
                                            //else {
                                      //    dispatch(handleOutletSelection({outletName:outletName, outletCode:outletCode, imageUrl:imageUrl}))
-                            } 
-                      }}  
+                                  } 
+                              } else if (tableBooking.selectedOutlet.outletCode &&  outletDetailsRef.current) {
+                                outletDetailsRef.current = false 
+                                dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
+                            //    const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode ===  tableBooking.selectedOutlet.outletCode)
+                                
+                              // dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
+                              }
+                    
+                    }  
                    // } 
-                 }, [launchData.outletListData.outletList,  tableBooking.selectedOutlet.outletCode])
+                 }, [launchData.outletListData.outletList,  tableBooking.selectedOutlet.outletCode, modalsData.modalTitle, launchData.outletListData.token])
 
                     //  useEffect(() => {      
                     //       if (outletDetails && outletDetails.imageUrl) {  
@@ -313,7 +336,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                }
                <div style={isTabletOrMobile ? {display:'flex', flexDirection:'column', paddingTop:'15px', fontSize:'12px'} : {display:'flex', flexDirection:'column', paddingTop:'15px'}}>
               <span className="ps-2"  
-              >{outletName}
+              >{tableBooking.selectedOutlet.outletName}
               { outletCount > 1 &&
                <span onClick={ ()=> { 
                 dispatch(getOutletList({propertyId, token})) 

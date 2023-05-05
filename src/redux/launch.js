@@ -97,7 +97,7 @@
             paramData: initialData(),
             token:initialTK(),
             outletDetails: initialOutletDetails(),
-            outletListData:initialOutletList(),
+            outletListData:'',
             viewPage:'',
             pageId:0
           },  
@@ -132,8 +132,8 @@
                  // state.bookmarks = action.payload.bookmarks
                 }).addCase(getOutletList.fulfilled, (state, action) => {
                   state.outletListData = action.payload
-                  
-                  sessionStorage.setItem('outletList', JSON.stringify(action.payload)) 
+                  console.log(action.payload)
+                 // sessionStorage.setItem('outletList', JSON.stringify(action.payload)) 
                  // state.bookmarks = action.payload.bookmarks
                 }).addCase(getOutletDetails.fulfilled, (state, action) => {
                   state.outletDetails = action.payload 
