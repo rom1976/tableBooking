@@ -111,7 +111,7 @@ const BookingView = (props) => {
            <Card style={{ backgroundColor: 'white', borderColor: 'white' }} className='bx'> 
            <CardHeader className='text-white fixed-top mb-5' style={{border:'none', background:'#EAEAEA'}}>
             { imageUrl ? <div className="d-flex justify-content-center m-0" style={{backgroundColor: '#EAEAEA', borderColor: '#333' , borderRadius:'7px 7px 0px 0px'}}>
-            <CardImg variant="top" src={imageUrl} style={{maxHeight:'70px', maxWidth:'200px', borderRadius:'10px'}}/>   
+            <img  src={imageUrl} style={{maxHeight:'70px', maxWidth:'200px', borderRadius:'10px'}}/>   
             </div> : <div className="d-flex justify-content-center m-0">
             <div className="m-0 pt-1 px-2" style={{textAlign:'center', background:'white', borderRadius:'5px', boxShadow:'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px'}}>
             <h5 className="m-0"  style={{color:'grey'}}>{bookingStatusDetails && bookingStatusDetails.bookingDetails.outletName} </h5>  
@@ -146,7 +146,7 @@ const BookingView = (props) => {
                  <small>Your reservation details</small>
             </div>
             <div className="d-flex justify-content-center " style={{ borderTop: "1px solid black"}}>
-              <div style={{width:'100px  ', borderRight: "1px solid black", marginTop:'5px', padding:'10px', textAlign:'center',  fontSize:'12px'}}
+              <div style={{width:'110px  ', borderRight: "1px solid black", marginTop:'5px', padding:'10px', textAlign:'center',  fontSize:'12px'}}
                className="px-3"
               >
                 <small>
@@ -154,14 +154,14 @@ const BookingView = (props) => {
                   <div>Date</div>
                   </small> 
                   </div> 
-              <div style={{width:'100px' , borderRight: "1px solid black", marginTop:'5px', padding:'10px', textAlign:'center',  fontSize:'12px'}}
+              <div style={{width:'110px' , borderRight: "1px solid black", marginTop:'5px', padding:'10px', textAlign:'center',  fontSize:'12px'}}
               className="px-3"
               >
                 <small>
                  {bookingStatusDetails && bookingStatusDetails.bookingDetails.reservationTime} 
                  <div>Time</div>
                  </small></div>
-              <div style={{width:'100px ', marginTop:'5px', padding:'10px', textAlign:'center', fontSize:'12px'}}
+              <div style={{width:'110px ', marginTop:'5px', padding:'10px', textAlign:'center', fontSize:'12px'}}
                className="px-3" 
               >
                 {bookingStatusDetails &&  <small> 

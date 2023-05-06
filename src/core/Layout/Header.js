@@ -254,6 +254,10 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                              // outletDetailsRef.current = true 
                                         
                                        }  else if (launchData.outletListData.outletList.length > 1) { 
+                                             if (!outletCode || outletCode === 'NONE') {
+                                              dispatch(handleOutletSelection({})) 
+                                              dispatch(handleModalTitle('Select a Restaurant'))  
+                                             }
                                               
                                              if (modalsData.modalTitle === 'Select a Location') {  
                                                   setImageUrl('')

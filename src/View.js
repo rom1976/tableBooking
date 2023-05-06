@@ -179,7 +179,7 @@ const View = (props) => {
         <CardHeader className='text-white fixed-top mb-5' style={{border:'none', background:'#EAEAEA'}}>
           { 
            walkingStatusDetails.walkInDetails.outletImageUrl ?  <div className="d-flex justify-content-center m-0" style={{backgroundColor: '#EAEAEA', borderColor: '#333' , borderRadius:'7px 7px 0px 0px'}}>
-           <CardImg variant="top" src={walkingStatusDetails.walkInDetails.outletImageUrl} style={{maxWidth:'200px', maxHeight:'70px', borderRadius:'10px'}}/>   
+           <img src={walkingStatusDetails.walkInDetails.outletImageUrl} style={{maxWidth:'200px', maxHeight:'70px', borderRadius:'10px'}}/>   
          </div> : <div className="d-flex justify-content-center m-0 ">
                   <div className="m-0 pt-1 px-2" style={{textAlign:'center', background:'white', borderRadius:'5px', boxShadow:'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px'}}>
                     <h5 className="m-0"  style={{color:'grey'}}>{walkingStatusDetails && walkingStatusDetails.walkInDetails.outletName}  </h5>  
@@ -220,7 +220,7 @@ const View = (props) => {
           } 
              <div  className="d-flex justify-content-center mt-5"><small>Your walkin details</small></div>
                <div className="d-flex justify-content-center " style={{ borderTop: "1px solid black"}}>
-          <div style={{width:'100px', borderRight: "1px solid black", marginTop:'5px', padding:'10px', textAlign:'center',  fontSize:'12px'}}
+          <div style={{width:'110px', borderRight: "1px solid black", marginTop:'5px', padding:'10px', textAlign:'center',  fontSize:'12px'}}
            className="px-3"
           >
             <small>
@@ -228,14 +228,14 @@ const View = (props) => {
               <div>Date</div>
               </small> 
               </div> 
-          <div style={{width:'100px', borderRight: "1px solid black", marginTop:'5px', padding:'10px', textAlign:'center',  fontSize:'12px'}}
+          <div style={{width:'110px', borderRight: "1px solid black", marginTop:'5px', padding:'10px', textAlign:'center',  fontSize:'12px'}}
           className="px-3"
           >
           <small>
              {walkingStatusDetails && walkingStatusDetails.walkInDetails.checkInTime} 
              <div>Time</div>
              </small></div>
-          <div style={{width:'100px', marginTop:'5px', padding:'10px', textAlign:'center', fontSize:'12px'}}
+          <div style={{width:'110px', marginTop:'5px', padding:'10px', textAlign:'center', fontSize:'12px'}}
            className="px-3" 
           >
             {walkingStatusDetails &&  <small> 
