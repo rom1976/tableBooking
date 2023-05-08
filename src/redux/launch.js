@@ -117,13 +117,18 @@
           },
           handlePageId: (state, action) => {
             state.pageId = action.payload
+          },
+          handleParamData: (state, action) => {
+            state.paramData = action.payload
+            sessionStorage.setItem('paramData', JSON.stringify(action.payload)) 
+            console.log(action.payload)
           }
           }, 
           extraReducers: builder => {
               builder
                 .addCase(getOrgDetails.fulfilled, (state, action) => {
                   state.paramData = action.payload 
-                 // sessionStorage.setItem('paramData', JSON.stringify(action.payload)) 
+                  sessionStorage.setItem('paramData', JSON.stringify(action.payload)) 
                  // state.bookmarks = action.payload.bookmarks
                 }) 
                 .addCase(getGuestAppToken.fulfilled, (state, action) => {
@@ -143,6 +148,6 @@
         }
       })
 
-export const { handleOutletList, handleLogout, handleViewPage, handlePageId  } = launchSlice.actions
+export const { handleOutletList, handleLogout, handleViewPage, handlePageId, handleParamData  } = launchSlice.actions
 
 export default launchSlice.reducer

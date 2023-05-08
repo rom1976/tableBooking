@@ -12,6 +12,7 @@ import { handleModalTitle } from "./redux/modals";
 const Launching = () => {
   const launch = useLaunch() 
   const launchData = useSelector((state) => state.launch)
+  const tableBooking = useSelector(state => state.tableBooking)
   const dispatch = useDispatch() 
   //const TableBooking = lazy(() => import('./TableBooking'));
   const [selfCheckIn, setSelfCheckIn] = useState(false)  
@@ -29,7 +30,7 @@ const Launching = () => {
     const [imageUrl, setImageUrl] = useState('')  
     const [pageId, setPageId] = useState(launchData.pageId)
     const tokenRef = useRef(true)
-    const reDirect = useRef(false)
+    const reDirect = useRef(tableBooking.isOpenBL)
     const refOtDetails = useRef(false)
 
      //    outletlet list should be called only for multiple property options avaialble
@@ -60,7 +61,7 @@ const Launching = () => {
           } 
            console.log(launchData)   
 
-    }, [launchData])
+    }, [launchData.paramData.propertyId, launchData.paramData.remarks, launchData.viewPage, launchData.pageId, launchData.token, launchData.paramData.outletCode])
 
        useEffect(() => { 
           if (token && launchData.paramData.outletCode !== "NONE" && launchData.paramData.outletCode !== '' && !refOtDetails.current) {
@@ -91,12 +92,18 @@ const Launching = () => {
            setSelfCheckIn(true)
            dispatch(handlePageId(3))  
          } else { 
-           setSelfCheckIn(false)
-           reDirect.current = true  
-           dispatch(handleViewPage(<View BookingId = {remarks.split('|')[1]} BookingType ={remarks.split('|')[0]} tableBookingHandler = {tableBookingHandler} PropertyId={propertyId}/>))
-           dispatch(handlePageId(2))  
+             if (tableBooking.isOpenBL) {
+              dispatch(handlePageId(1))
+             } else {
+              setSelfCheckIn(false)  
+              dispatch(handleViewPage(<View BookingId = {remarks.split('|')[1]} BookingType ={remarks.split('|')[0]} tableBookingHandler = {tableBookingHandler} PropertyId={propertyId}/>))
+              dispatch(handlePageId(2))
+             }
+            
            //setViewPage()
           } 
+          
+          
         }
      
      useEffect(() => {

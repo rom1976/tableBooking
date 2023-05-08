@@ -72,7 +72,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
              if (launchData.outletListData.outletList.length > 0 && !outletCode && !tableBooking.selectedOutlet.outletCode) { // outleCode is mentioned to avoid running it when reset tablebooking 
                     const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode === launchData.paramData.outletCode)
                                               //  alert(tableBooking.selectedOutlet.outletName)
-                    dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
+                                              defaultOutletObj && dispatch(handleOutletSelection({outletName:defaultOutletObj.outletName, outletCode:defaultOutletObj.outletCode, imageUrl:defaultOutletObj.imageUrl}))
                } 
              }
           }, [launchData.paramData.outletCode, launchData.outletListData.outletList, modalsData.modalTitle])
@@ -113,7 +113,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                           dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
                        
                         }
-                        if (sel.outletCode === outletCode && launchData.outletDetails.outletDetails.length === 0) {
+                        if (sel.outletCode === outletCode && launchData.outletDetails.outletDetails && launchData.outletDetails.outletDetails.length === 0) {
                           outletDetailsRef.current = false
                         }
                       } 
@@ -188,10 +188,12 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                           if (!propertyId || propertyId === 'NONE') {
                                                dispatch(handleModalTitle('Select a Location'))
                                                outletDetailsRef.current = true
-                                             } else {
+                                             } else if (propertyId){
+                                              console.log(property.propertyData.propertyList)
                                                const [propertyObj] =  property.propertyData.propertyList.filter(item => item.propertyId === propertyId) 
-                                                dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
-                                                  if (token) {
+                                                console.log(propertyObj)
+                                                propertyObj && dispatch(handlePropertySelection({propertyName:propertyObj.propertyName, propertyId:propertyObj.propertyId}))
+                                                  if (token && propertyObj) {
                                                        dispatch(getOutletList({propertyId:propertyObj.propertyId, token}))
                                                          outletListRef.current = false
                                                          outletDetailsRef.current = true
@@ -243,7 +245,8 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                  if(!tableBooking.selectedOutlet.outletCode || tableBooking.selectedOutlet.outletCode === '' || tableBooking.selectedOutlet.outletCode === 'NONE')  {  
                                     console.log(launchData.outletListData.outletList.length) 
                                      
-                                      if (launchData.outletListData.outletList.length === 1 ) {   
+                                      if (launchData.outletListData.outletList.length === 1 ) { 
+                                        
                                            const [outl] = launchData.outletListData.outletList 
                                            dispatch(handleModalTitle(''))  
                                             setImageUrl('')
@@ -252,6 +255,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                               dispatch(handleOutletSelection({outletName:outl.outletName, outletCode:outl.outletCode, imageUrl:outl.imageUrl}   ))
                                               dispatch(getOutletDetails({outletCode:outl.outletCode, tokenOption:launchData.outletListData.token}))
                                              // outletDetailsRef.current = true 
+                                             
                                         
                                        }  else if (launchData.outletListData.outletList.length > 1) { 
                                              if (!outletCode || outletCode === 'NONE') {
@@ -279,7 +283,7 @@ const [outletDetails, setOutletDetails] = useState(launchData.outletDetails.outl
                                            //else {
                                      //    dispatch(handleOutletSelection({outletName:outletName, outletCode:outletCode, imageUrl:imageUrl}))
                                   } 
-                              } else if (tableBooking.selectedOutlet.outletCode &&  outletDetailsRef.current) {
+                              } else if (tableBooking.selectedOutlet.outletCode &&  outletDetailsRef.current) { 
                                 outletDetailsRef.current = false 
                                 dispatch(getOutletDetails({outletCode:tableBooking.selectedOutlet.outletCode, tokenOption:launchData.outletListData.token}))
                             //    const [defaultOutletObj] = launchData.outletListData.outletList.filter(item => item.outletCode ===  tableBooking.selectedOutlet.outletCode)

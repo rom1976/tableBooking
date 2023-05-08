@@ -265,6 +265,7 @@ const BookingDetailsList = (props) => {
                onClick={() => {   
                      console.log(item.outletCode) 
                      dispatch(handleViewPage(<View PropertyId= {item.propertyId} BookingId = {item.bookingId} OutletCode ={item.outletCode} tableBookingHandler = {tableBookingHandler}/>))
+                     dispatch(handleIsOpenBL(false))
                      dispatch(handlePageId(2)) 
                      // sessionStorage.setItem('paramData',JSON.stringify({organizationId:OrganizationId, propertyId:item.propertyId, propertyName: propertyName, 
                      // outletName: outletName, outletCode:item.outletCode,imageUrl:imageUrl,})) 

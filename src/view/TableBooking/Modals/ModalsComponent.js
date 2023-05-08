@@ -101,6 +101,13 @@ const ModalsComponent = (props) => {
                 //  alert('greater length')      
                 setModalTitle('Select a Restaurant')
              }
+            //  else if (!outletCode && launch.outletListData.outletList && launch.outletListData.outletList.length === 1 && selectRestaRef.current) {
+            //  const [outl] = launch.outletListData.outletList 
+            // 
+            //     dispatch(handleOutletSelection({outletName:outl.outletName, outletCode:outl.outletCode, imageUrl:outl.imageUrl}   ))
+            //     dispatch(getOutletDetails({outletCode:outl.outletCode, tokenOption:launch.outletListData.token}))
+            // 
+            // }
            }
    
         }, [launch.outletListData, outletCode])
@@ -133,22 +140,24 @@ const ModalsComponent = (props) => {
            if (modalsData.otpData) { 
               setOtpReferenceId(modalsData.otpData.otpReferenceId)
               setOtpExpiryDuration(Number(modalsData.otpData.otpExpiryDuration * 60000))
+                   const otpExpiryDurationTemp = Number(modalsData.otpData.otpExpiryDuration * 60000)
+              if (otpExpiryDurationTemp) setCountDown(Date.now() + otpExpiryDurationTemp)
            }
-       }, [modalsData])
+       }, [modalsData.otpData, modalsData.modalTitle])
 
-       useEffect(() => {
-        if (modalsData.otpData) { 
-            setOtpReferenceId(modalsData.otpData.otpReferenceId)
-            setOtpExpiryDuration(Number(modalsData.otpData.otpExpiryDuration * 60000))
-         }
-        
-       }, [modalsData.otpData])
+  //    useEffect(() => {
+  //     if (modalsData.otpData) { 
+  //         setOtpReferenceId(modalsData.otpData.otpReferenceId)
+  //         setOtpExpiryDuration(Number(modalsData.otpData.otpExpiryDuration * 60000))
+  //      }
+  //     
+  //    }, [modalsData.otpData])
  
    
-        useEffect(() => {
-               if (otpExpiryDuration) setCountDown(Date.now() + otpExpiryDuration)
-           }, [otpExpiryDuration])
-        
+    //    useEffect(() => {
+    //           if (otpExpiryDuration) setCountDown(Date.now() + otpExpiryDuration)
+    //       }, [otpExpiryDuration])
+    //    
         useEffect(() => {
           if (property.propertyData) setpropertyList(property.propertyData.propertyList) 
         }, [property.propertyData])   
@@ -161,9 +170,10 @@ const ModalsComponent = (props) => {
            )
           }
            
-    const otpHandler = () => {     
+    const otpHandler = (no) => {   
+      console.log(ContactNo)  
              // GET 'https://dev.lucidits.com/LUCIDAPI/V1/SendOTP?OTPFor=4&MobileNo=9738854149'
-           if ((!loggedIn && (ContactNo || contactNoRef.current))) dispatch(sendOTP({ContactNo, contactNoRef: contactNoRef.current, token: launch.outletListData.token})) 
+           if ((!loggedIn && (no || contactNoRef.current))) dispatch(sendOTP({no, contactNoRef: contactNoRef.current, token: launch.outletListData.token})) 
          }
  
         const contactHandler = (no) => {       
@@ -175,15 +185,17 @@ const ModalsComponent = (props) => {
             if (modalTitle === 'Your Contact No' && !ContactNo || (ContactNo !== no)) {
                           if (ContactNo !== no) {
                             dispatch(handleLogin(false))
+                            setContactNo(no) 
                           }
 
-                        setContactNo(no) 
+                       
                       //  dispatch(handleBooking({...tableBooking.tableData, ContactNo:no}))
-                        otpHandler() 
+                        otpHandler(no) 
                         dispatch(handleModalTitle('OTP')) 
                       } else {
+                        setContactNo(no) 
                         setModalErrorMessage('') 
-                        otpHandler() 
+                        otpHandler(no) 
                         dispatch(handleModalTitle('OTP')) 
                 }    
                       }

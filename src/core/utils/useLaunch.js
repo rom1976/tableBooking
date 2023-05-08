@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { getOrgDetails, getGuestAppToken, handlePageId } from "../../redux/launch";
+import { getOrgDetails, getGuestAppToken, handlePageId, handleLogout, handleParamData } from "../../redux/launch";
  
 import { useSearchParams} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useRef } from "react";
+import axios from "axios";
+import { handleBookingClear, handleLogin, handlePropertySelection } from "../../redux/tableBooking";
 
 const useLaunch = () => {
     const dispatch = useDispatch()
@@ -28,7 +30,45 @@ const useLaunch = () => {
                                if (!urlKey) {
                                    dispatch(handlePageId(0))
                                } 
-                            }  
+                            } else if (launchData.paramData.organizationId && !refUrl.current) { 
+                                           
+                                     const urlString = urlKey.replace(/ /g,'+')
+                                           axios.post('https://link.lucidits.com/api-lucid/Beta/V1/LongUrl',
+                                          { 
+                                           urlKey:urlString,
+                                           username: "lucid@WebsiteShorturl",
+                                           password: "web@Redirect[lucid]",
+                                           requestIP: "",
+                                           userId: "" 
+                                          }
+                                          ).then((res)=> { 
+                                            if (res.data.isSuccessful === true) {
+                                                const paramDataTemp = res.data.longUrlInput
+                                                   if (paramDataTemp.organizationId !== OrganizationId) { 
+                                                    localStorage.clear()
+                                                    sessionStorage.clear()
+                                                     //   alert(paramDataTemp.organizationId, OrganizationId) 
+                                                       console.log(paramDataTemp) 
+                                                       return paramDataTemp
+                                                   }
+                                            } 
+                                          }).then((res) => {
+                                             if (res) {
+                                                 console.log(res.organizationId, OrganizationId) 
+                                              dispatch(handleParamData(res))
+                                                  dispatch(getGuestAppToken({OrganizationId:res.organizationId, PropertyId:res.propertyId}))
+                                                  console.log(res)  
+                                                  refToken.current = true
+                                                } else {
+                                                  if (OrganizationId && !launchData.token && !refToken.current) { 
+                                                      dispatch(getGuestAppToken({OrganizationId, PropertyId}))
+                                                      refToken.current = true
+                                                  } 
+                                                }
+                                          }) 
+                                          refUrl.current = true  
+                                }
+                             
                     }, [launchData.paramData.organizationId])
 
                      useEffect(() => {
@@ -47,10 +87,10 @@ const useLaunch = () => {
                  //https://dev.lucidits.com/LUCIDPOSIntegrationAPI/V1/GetGuestAppToken
                  //?OrganizationId=<<OrganizationId>>&PropertyId=<<PropertyId>>&TokenKey=<<TokenKey>> 
                  //if (OrganizationId && reDirect.current === false) { 
-               if (OrganizationId && !launchData.token && !refToken.current) { 
-                  dispatch(getGuestAppToken({OrganizationId, PropertyId}))
-                  refToken.current = true
-                } 
+             //  if (OrganizationId && !launchData.token && !refToken.current) { 
+             //     //  dispatch(getGuestAppToken({OrganizationId, PropertyId}))
+             //       refToken.current = true
+             //   } 
                 
             }, [OrganizationId, PropertyId, launchData.token])
  

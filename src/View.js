@@ -52,12 +52,11 @@ const View = (props) => {
  }, [props.checkInId])
  
   const viewTableBooking = () => {
-      // setView('table') 
+       setView('table') 
        // setTimeout(() => dispatch(handleViewPage(''), 1000))
   //     dispatch(handleViewPage('')) 
-      // props.tableBookingHandler()
-      
-      dispatch(handlePageId(1))
+      // props.tableBookingHandler() 
+     //  dispatch(handlePageId(1))
        dispatch(handleIsOpenBL(true))  
     } 
 

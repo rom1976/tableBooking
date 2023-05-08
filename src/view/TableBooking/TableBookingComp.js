@@ -241,37 +241,37 @@ const [diffNo, setDiffNo] = useState(false)
         
             if (response.data.errorCode === 0) {
                axios.post(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}SaveTableBooking`, 
-              {
-                OutletCode:outletCode,
-                "BookingDate":bookingDate, // "04-Aug-2022",
-                "BookingTime":moment(BookingTime, ["h:mm A"]).format("HH:mm"), // "16:00",
-                 NoOfGuest, // 10,
-                 GuestDetails:{
-                    GuestTitleId:selectedTitle[0].value,
-                    GuestTitle:selectedTitle[0].label, //: "Mr.",
-                    FirstName, //: "Yuvi",
-                    LastName, //": "A",
-                    ContactNoCountryCode:selectedTelephoneCode[0].label, // ": "91",
-                    ContactNo, //": "9738854149",
-                    EmailId //": "yuvi@lucidits.com"
-                },
-                Instruction,
-             }, {
-             headers: { Authorization: `Bearer ${launch.outletListData.token}`}}
-           ).then(res => {
-            if (res.data.errorCode === 0) { 
-               setSaveToggle(false)
-           // setModalTitle('')
-           dispatch(handleModalTitle('Your Booking Success'))
-             setDiffNo(false)
-            //setModalSave(!modalSave)
-            setBookingHandlerToggle(false)  
-              setBookingDate(d.toISOString().split('T')[0])
-              setBookingTime('')
-              setNoOfGuest(1)
-          }
+                 {
+                   OutletCode:outletCode,
+                   "BookingDate":bookingDate, // "04-Aug-2022",
+                   "BookingTime":moment(BookingTime, ["h:mm A"]).format("HH:mm"), // "16:00",
+                    NoOfGuest, // 10,
+                    GuestDetails:{
+                       GuestTitleId:selectedTitle[0].value,
+                       GuestTitle:selectedTitle[0].label, //: "Mr.",
+                       FirstName, //: "Yuvi",
+                       LastName, //": "A",
+                       ContactNoCountryCode:selectedTelephoneCode[0].label, // ": "91",
+                       ContactNo, //": "9738854149",
+                       EmailId //": "yuvi@lucidits.com"
+                   },
+                   Instruction,
+                   }, {
+                     headers: { Authorization: `Bearer ${launch.outletListData.token}`}}
+                     ).then(res => {
+                   if (res.data.errorCode === 0) { 
+                   setSaveToggle(false)
+                   // setModalTitle('')
+                     dispatch(handleModalTitle('Your Booking Success'))
+                     setDiffNo(false)
+                    //setModalSave(!modalSave)
+                     setBookingHandlerToggle(false)  
+                      setBookingDate(d.toISOString().split('T')[0])
+                      setBookingTime('')
+                      setNoOfGuest(1)
+               }
          
-          })
+            })
             }
            })
             }  

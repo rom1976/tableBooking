@@ -1,15 +1,15 @@
 // ** Redux Imports
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
-
+ 
    const initialBooking = () => {
-     const item = window.sessionStorage.getItem('tableBooking')
+     const item = window.localStorage.getItem('tableBooking')
      //** Parse stored json or if none return initialValue
      return item ? JSON.parse(item) : {}
    }
 
     const initialLoggedIn = () => {
-      const item = window.sessionStorage.getItem('loggedIn')
+      const item = window.localStorage.getItem('loggedIn')
       //** Parse stored json or if none return initialValue
       return item ? JSON.parse(item) : false
     }
@@ -30,7 +30,7 @@ import axios from 'axios'
       return item ? JSON.parse(item) : false
     }
 
-export const getGuestTotalBooking = createAsyncThunk('tableBooking/getGuestTotalBooking', async (obj) => {
+   export const getGuestTotalBooking = createAsyncThunk('tableBooking/getGuestTotalBooking', async (obj) => {
   const res = axios.get(`${process.env.REACT_APP_LUCIDPOS_GUEST_TABLE}GetGuestTotalBooking`, {
                   params:{
                     ContactNo:obj.ContactNo
@@ -89,7 +89,7 @@ export const getGuestTotalBooking = createAsyncThunk('tableBooking/getGuestTotal
   
   export const tableSlice = createSlice({
     name: 'tableBooking',
-    initialState: {
+    initialState: { 
       tableData: initialBooking(),
       loggedIn:initialLoggedIn(),
       guestList: initialGuestList(),
@@ -99,10 +99,10 @@ export const getGuestTotalBooking = createAsyncThunk('tableBooking/getGuestTotal
       timeSlotList:'',
       isOpenBL:false
     },
-    reducers: {
+    reducers: {  
       handleBooking: (state, action) => {
         state.tableData = action.payload 
-        sessionStorage.setItem('tableBooking', JSON.stringify(action.payload)) 
+        localStorage.setItem('tableBooking', JSON.stringify(action.payload)) 
       },
       handleBookingClear: state => {
         state.tableData = {} 
@@ -112,7 +112,7 @@ export const getGuestTotalBooking = createAsyncThunk('tableBooking/getGuestTotal
       handleLogin: (state, action) => {
          state.loggedIn = action.payload 
           // ** Remove user, accessToken & refreshToken from sessionStorage
-         sessionStorage.setItem('loggedIn', JSON.stringify(action.payload)) 
+         localStorage.setItem('loggedIn', JSON.stringify(action.payload)) 
       },
       handlePropertySelection: (state, action) => {
            state.selectedProperty = action.payload
